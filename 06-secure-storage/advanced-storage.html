@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Secure Storage Examples</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Advanced Secure Storage Examples</h1>
+            <p>Encryption, key management, and secure data handling</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Security Features Implemented:</strong>
+            <ul>
+                <li>Web Crypto API - Client-side encryption</li>
+                <li>Key Management - Secure key generation</li>
+                <li>Data Sanitization - Input cleaning</li>
+                <li>Secure Cookies - Proper configuration</li>
+                <li>Session Management - Secure sessions</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <h3>🔐 Encrypted Data Storage</h3>
+            <div class="form-group">
+                <label>Secret Data:</label>
+                <input type="text" id="secretData" placeholder="Enter data to encrypt">
+            </div>
+            <button onclick="encryptAndStore()" class="btn">Encrypt & Store</button>
+            <button onclick="decryptAndRetrieve()" class="btn">Decrypt & Retrieve</button>
+            <div id="encryptionResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// ✅ SECURE: Web Crypto API encryption
+async function encryptData(data, key) {
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(JSON.stringify(data));
+    
+    const encryptedData = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: crypto.getRandomValues(new Uint8Array(12)) },
+        key,
+        dataBuffer
+    );
+    
+    return encryptedData;
+}
+
+// ✅ SECURE: Key generation
+async function generateSecureKey() {
+    return await crypto.subtle.generateKey(
+        { name: 'AES-GCM', length: 256 },
+        true,
+        ['encrypt', 'decrypt']
+    );
+}
+        </div>
+    </div>
+
+    <script>
+        let encryptionKey = null;
+        
+        async function encryptAndStore() {
+            const data = document.getElementById('secretData').value;
+            const resultsDiv = document.getElementById('encryptionResults');
+            
+            if (!data) {
+                resultsDiv.innerHTML = '<p style="color: #f44336;">❌ Please enter data to encrypt</p>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                // ✅ SECURE: Generate encryption key
+                if (!encryptionKey) {
+                    encryptionKey = await crypto.subtle.generateKey(
+                        { name: 'AES-GCM', length: 256 },
+                        true,
+                        ['encrypt', 'decrypt']
+                    );
+                }
+                
+                // ✅ SECURE: Encrypt data
+                const encoder = new TextEncoder();
+                const dataBuffer = encoder.encode(data);
+                const iv = crypto.getRandomValues(new Uint8Array(12));
+                
+                const encryptedData = await crypto.subtle.encrypt(
+                    { name: 'AES-GCM', iv },
+                    encryptionKey,
+                    dataBuffer
+                );
+                
+                // ✅ SECURE: Store encrypted data
+                const encryptedArray = new Uint8Array(encryptedData);
+                localStorage.setItem('encryptedData', JSON.stringify({
+                    data: Array.from(encryptedArray),
+                    iv: Array.from(iv)
+                }));
+                
+                resultsDiv.innerHTML = `
+                    <h4>✅ Data Encrypted & Stored Successfully!</h4>
+                    <p><strong>Original Data:</strong> ${data}</p>
+                    <p><strong>Encrypted Size:</strong> ${encryptedArray.length} bytes</p>
+                    <p><strong>IV:</strong> ${Array.from(iv).slice(0, 8).join('')}...</p>
+                    <p>✅ Data is now securely encrypted and stored</p>
+                `;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <h4>❌ Encryption Failed</h4>
+                    <p style="color: #f44336;">Error: ${error.message}</p>
+                `;
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        async function decryptAndRetrieve() {
+            const resultsDiv = document.getElementById('encryptionResults');
+            
+            try {
+                const storedData = localStorage.getItem('encryptedData');
+                if (!storedData) {
+                    resultsDiv.innerHTML = '<p style="color: #f44336;">❌ No encrypted data found</p>';
+                    resultsDiv.style.display = 'block';
+                    return;
+                }
+                
+                const { data: encryptedArray, iv } = JSON.parse(storedData);
+                
+                // ✅ SECURE: Decrypt data
+                const decryptedData = await crypto.subtle.decrypt(
+                    { name: 'AES-GCM', iv: new Uint8Array(iv) },
+                    encryptionKey,
+                    new Uint8Array(encryptedArray)
+                );
+                
+                const decoder = new TextDecoder();
+                const decryptedText = decoder.decode(decryptedData);
+                
+                resultsDiv.innerHTML = `
+                    <h4>✅ Data Decrypted Successfully!</h4>
+                    <p><strong>Decrypted Data:</strong> ${decryptedText}</p>
+                    <p>✅ Data retrieved and decrypted securely</p>
+                `;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <h4>❌ Decryption Failed</h4>
+                    <p style="color: #f44336;">Error: ${error.message}</p>
+                `;
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        console.log('✅ Advanced secure storage examples loaded');
+        console.log('🔐 Web Crypto API available:', !!window.crypto.subtle);
+    </script>
+</body>
+</html> 

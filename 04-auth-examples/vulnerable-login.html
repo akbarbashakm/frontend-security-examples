@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerable Login System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #f44336; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+        .content { padding: 20px; }
+        .warning { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #c62828; }
+        .login-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; max-width: 400px; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #d32f2f; }
+        .btn-success { background: #4caf50; }
+        .vulnerability-demo { background: #fff3e0; padding: 15px; border-radius: 4px; margin: 20px 0; border: 2px dashed #ff9800; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .attack-panel { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .attempt-log { background: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; border-radius: 4px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px; margin: 10px 0; }
+        .success { color: #4caf50; font-weight: bold; }
+        .failure { color: #f44336; }
+        .hidden { display: none; }
+        .user-panel { background: #e8f5e8; border: 1px solid #4caf50; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .admin-panel { background: #e3f2fd; border: 1px solid #2196f3; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Vulnerable Authentication System</h1>
+            <p>Multiple authentication flaws for educational demonstration</p>
+        </div>
+
+        <div class="content">
+            <div class="warning">
+                <strong>⚠️ Security Warning:</strong> This login system contains multiple authentication vulnerabilities!
+                <br><strong>NEVER implement authentication like this in real applications!</strong>
+            </div>
+
+            <!-- Login Section -->
+            <div id="loginSection" class="login-section">
+                <h3>🔐 System Login</h3>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="password" placeholder="Enter password">
+                </div>
+                <button class="btn" onclick="attemptLogin()">Login</button>
+                <button class="btn btn-success" onclick="showCredentials()">Show Demo Credentials</button>
+                
+                <div id="loginMessage" style="margin-top: 10px;"></div>
+                
+                <!-- Demo credentials display -->
+                <div id="credentialsHelp" class="hidden" style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
+                    <h4>Demo User Accounts:</h4>
+                    <ul style="margin: 5px 0; font-size: 14px;">
+                        <li><strong>admin</strong> / admin</li>
+                        <li><strong>user</strong> / password</li>
+                        <li><strong>guest</strong> / guest</li>
+                        <li><strong>test</strong> / test</li>
+                        <li><strong>admin</strong> / password123</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- User Dashboard (shown after login) -->
+            <div id="userDashboard" class="user-panel hidden">
+                <h3>👤 User Dashboard</h3>
+                <p><strong>Welcome, <span id="loggedInUser"></span>!</strong></p>
+                <p><strong>Role:</strong> <span id="userRole"></span></p>
+                <p><strong>Session ID:</strong> <span id="sessionId"></span></p>
+                <p><strong>Last Login:</strong> <span id="lastLogin"></span></p>
+                
+                <h4>Available Actions:</h4>
+                <button class="btn" onclick="viewProfile()">View Profile</button>
+                <button class="btn" onclick="changePassword()">Change Password</button>
+                <button class="btn" onclick="logout()">Logout</button>
+                
+                <div id="profileData" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Admin Panel (should be restricted) -->
+            <div id="adminPanel" class="admin-panel hidden">
+                <h3>🔑 Admin Panel</h3>
+                <p><strong>⚠️ Administrative Functions</strong></p>
+                
+                <h4>Admin Actions:</h4>
+                <button class="btn" onclick="viewAllUsers()">View All Users</button>
+                <button class="btn" onclick="deleteUser()">Delete User</button>
+                <button class="btn" onclick="viewSystemLogs()">View System Logs</button>
+                <button class="btn" onclick="updateSystemSettings()">Update Settings</button>
+                
+                <div id="adminData" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- Vulnerability Demonstrations -->
+            <div class="vulnerability-demo">
+                <h3>🎯 Authentication Vulnerabilities Demonstrated</h3>
+                
+                <h4>1. Weak Default Credentials</h4>
+                <p>Common username/password combinations that work:</p>
+                <div class="code-example">
+admin/admin, admin/password, user/password, guest/guest, test/test
+                </div>
+                
+                <h4>2. No Account Lockout</h4>
+                <p>Try as many wrong passwords as you want - no lockout!</p>
+                <button class="btn" onclick="demonstrateBruteForce()">Demo Brute Force Attack</button>
+                
+                <h4>3. Predictable Session IDs</h4>
+                <p>Session IDs are sequential and predictable:</p>
+                <div class="code-example">
+Session1001, Session1002, Session1003...
+// Easy to guess other users' sessions!
+                </div>
+                
+                <h4>4. Client-Side Role Validation</h4>
+                <p>Role is stored in JavaScript - easily manipulated!</p>
+                <button class="btn" onclick="demonstrateRoleManipulation()">Become Admin</button>
+                
+                <h4>5. Insecure Password Storage</h4>
+                <p>Passwords stored in plain text in JavaScript array:</p>
+                <div class="code-example">
+// 🚨 NEVER do this!
+const users = [
+    {username: 'admin', password: 'admin', role: 'admin'},
+    {username: 'user', password: 'password', role: 'user'}
+];
+                </div>
+            </div>
+
+            <!-- Attack Testing Panel -->
+            <div class="attack-panel">
+                <h3>⚔️ Authentication Attack Testing</h3>
+                
+                <h4>SQL Injection Attempts</h4>
+                <p>Try these payloads in the username field:</p>
+                <button class="btn" onclick="testSQLInjection('admin\' OR \'1\'=\'1')">Test: admin' OR '1'='1</button>
+                <button class="btn" onclick="testSQLInjection('admin\' --')">Test: admin' --</button>
+                <button class="btn" onclick="testSQLInjection('\' OR 1=1 --')">Test: ' OR 1=1 --</button>
+                
+                <h4>Session Manipulation</h4>
+                <button class="btn" onclick="hijackSession()">Attempt Session Hijacking</button>
+                <button class="btn" onclick="sessionFixation()">Test Session Fixation</button>
+                
+                <h4>Privilege Escalation</h4>
+                <button class="btn" onclick="escalatePrivileges()">Escalate to Admin</button>
+                <button class="btn" onclick="accessAdminFunctions()">Access Admin Panel</button>
+                
+                <div class="attempt-log" id="attackLog">
+                    <div style="color: #666;">Attack attempt log will appear here...</div>
+                </div>
+            </div>
+
+            <!-- Login Attempt Monitor -->
+            <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                <h3>📊 Login Attempt Monitor</h3>
+                <p><strong>Total Attempts:</strong> <span id="totalAttempts">0</span></p>
+                <p><strong>Failed Attempts:</strong> <span id="failedAttempts">0</span></p>
+                <p><strong>Success Rate:</strong> <span id="successRate">0%</span></p>
+                
+                <div class="attempt-log" id="loginAttempts">
+                    <div style="color: #666;">Login attempts will be logged here...</div>
+                </div>
+                
+                <button class="btn" onclick="clearLogs()">Clear Logs</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 🚨 VULNERABLE: Plain text credentials stored in client-side code
+        const users = [
+            {username: 'admin', password: 'admin', role: 'admin', id: 1},
+            {username: 'user', password: 'password', role: 'user', id: 2},
+            {username: 'guest', password: 'guest', role: 'guest', id: 3},
+            {username: 'test', password: 'test', role: 'user', id: 4},
+            {username: 'admin', password: 'password123', role: 'admin', id: 5}
+        ];
+
+        // 🚨 VULNERABLE: Global session state
+        let currentUser = null;
+        let sessionId = null;
+        let sessionCounter = 1000; // Predictable session IDs
+        let attemptCounter = 0;
+        let failedCounter = 0;
+
+        function showCredentials() {
+            const credDiv = document.getElementById('credentialsHelp');
+            credDiv.classList.toggle('hidden');
+        }
+
+        function attemptLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('loginMessage');
+            
+            attemptCounter++;
+            
+            // 🚨 VULNERABLE: Client-side authentication
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                // 🚨 VULNERABLE: Predictable session ID
+                sessionId = 'Session' + (++sessionCounter);
+                currentUser = user;
+                
+                messageDiv.innerHTML = '<div class="success">✅ Login successful!</div>';
+                showDashboard(user);
+                logAttempt(username, password, true);
+                
+                // 🚨 VULNERABLE: Store session in localStorage (client-side)
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                localStorage.setItem('sessionId', sessionId);
+                
+                console.log('🚨 User logged in:', user);
+                console.log('🚨 Session ID:', sessionId);
+                
+            } else {
+                failedCounter++;
+                messageDiv.innerHTML = '<div class="failure">❌ Invalid username or password</div>';
+                logAttempt(username, password, false);
+                
+                // 🚨 VULNERABLE: No account lockout, detailed error messages
+                console.log('🚨 Login failed for username:', username);
+            }
+            
+            updateStats();
+        }
+
+        function showDashboard(user) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('userDashboard').classList.remove('hidden');
+            
+            document.getElementById('loggedInUser').textContent = user.username;
+            document.getElementById('userRole').textContent = user.role;
+            document.getElementById('sessionId').textContent = sessionId;
+            document.getElementById('lastLogin').textContent = new Date().toLocaleString();
+            
+            // 🚨 VULNERABLE: Show admin panel based on client-side role
+            if (user.role === 'admin') {
+                document.getElementById('adminPanel').classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            sessionId = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('sessionId');
+            
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('userDashboard').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('loginMessage').innerHTML = '';
+            
+            console.log('🔐 User logged out');
+        }
+
+        function viewProfile() {
+            const profileDiv = document.getElementById('profileData');
+            // 🚨 VULNERABLE: Direct object reference without authorization
+            profileDiv.innerHTML = `
+                <h4>Profile Information:</h4>
+                <p><strong>User ID:</strong> ${currentUser.id}</p>
+                <p><strong>Username:</strong> ${currentUser.username}</p>
+                <p><strong>Role:</strong> ${currentUser.role}</p>
+                <p><strong>Session:</strong> ${sessionId}</p>
+                <p><em>Try accessing other user profiles by changing the URL!</em></p>
+            `;
+        }
+
+        function changePassword() {
+            // 🚨 VULNERABLE: No current password verification
+            const newPassword = prompt('Enter new password:');
+            if (newPassword) {
+                currentUser.password = newPassword;
+                // 🚨 VULNERABLE: Update in client-side array only
+                const userIndex = users.findIndex(u => u.id === currentUser.id);
+                users[userIndex].password = newPassword;
+                alert('✅ Password changed successfully!');
+                console.log('🚨 Password changed without verification:', newPassword);
+            }
+        }
+
+        // Attack demonstration functions
+        function demonstrateBruteForce() {
+            const commonPasswords = ['123456', 'password', 'admin', 'letmein', 'qwerty'];
+            let attempts = 0;
+            
+            const interval = setInterval(() => {
+                if (attempts >= commonPasswords.length) {
+                    clearInterval(interval);
+                    logAttack('Brute force completed - no account lockout!');
+                    return;
+                }
+                
+                const testPassword = commonPasswords[attempts];
+                logAttack(`Brute force attempt ${attempts + 1}: admin/${testPassword}`);
+                
+                // Simulate actual login attempt
+                document.getElementById('username').value = 'admin';
+                document.getElementById('password').value = testPassword;
+                attemptLogin();
+                
+                attempts++;
+            }, 1000);
+        }
+
+        function demonstrateRoleManipulation() {
+            if (currentUser) {
+                // 🚨 VULNERABLE: Client-side role modification
+                currentUser.role = 'admin';
+                document.getElementById('userRole').textContent = 'admin';
+                document.getElementById('adminPanel').classList.remove('hidden');
+                
+                logAttack('Role escalated to admin via client-side manipulation');
+                console.log('🚨 Role manipulated to admin:', currentUser);
+            } else {
+                alert('Please login first');
+            }
+        }
+
+        function testSQLInjection(payload) {
+            document.getElementById('username').value = payload;
+            document.getElementById('password').value = 'anything';
+            
+            logAttack(`SQL Injection attempt: ${payload}`);
+            
+            // 🚨 VULNERABLE: Simulate SQL injection working
+            if (payload.includes("' OR '1'='1") || payload.includes(' OR 1=1')) {
+                const adminUser = users.find(u => u.role === 'admin');
+                if (adminUser) {
+                    currentUser = adminUser;
+                    sessionId = 'Session' + (++sessionCounter);
+                    showDashboard(adminUser);
+                    document.getElementById('loginMessage').innerHTML = 
+                        '<div class="success">✅ SQL Injection successful - logged in as admin!</div>';
+                    logAttack('SQL Injection bypassed authentication!');
+                }
+            }
+        }
+
+        function hijackSession() {
+            // 🚨 VULNERABLE: Predictable session hijacking
+            const targetSession = 'Session' + (sessionCounter - 1);
+            sessionId = targetSession;
+            
+            if (currentUser) {
+                document.getElementById('sessionId').textContent = targetSession;
+                logAttack(`Session hijacked: ${targetSession}`);
+                console.log('🚨 Session hijacked:', targetSession);
+            } else {
+                // Try to impersonate with stolen session
+                const storedUser = localStorage.getItem('currentUser');
+                if (storedUser) {
+                    currentUser = JSON.parse(storedUser);
+                    sessionId = targetSession;
+                    showDashboard(currentUser);
+                    logAttack('Session hijacking successful!');
+                }
+            }
+        }
+
+        function sessionFixation() {
+            // 🚨 VULNERABLE: Session fixation attack
+            const fixedSession = 'FixedSession12345';
+            sessionId = fixedSession;
+            
+            logAttack(`Session fixation attempt with: ${fixedSession}`);
+            
+            if (currentUser) {
+                document.getElementById('sessionId').textContent = fixedSession;
+                console.log('🚨 Session fixed to:', fixedSession);
+            }
+        }
+
+        function escalatePrivileges() {
+            if (currentUser && currentUser.role !== 'admin') {
+                // 🚨 VULNERABLE: Client-side privilege escalation
+                currentUser.role = 'admin';
+                document.getElementById('userRole').textContent = 'admin';
+                document.getElementById('adminPanel').classList.remove('hidden');
+                
+                logAttack('Privilege escalation successful - now admin!');
+                console.log('🚨 Privileges escalated:', currentUser);
+            } else if (!currentUser) {
+                alert('Please login first');
+            }
+        }
+
+        function accessAdminFunctions() {
+            // 🚨 VULNERABLE: Force show admin panel
+            document.getElementById('adminPanel').classList.remove('hidden');
+            logAttack('Admin panel accessed without proper authorization');
+        }
+
+        // Admin functions (should be protected)
+        function viewAllUsers() {
+            const adminDiv = document.getElementById('adminData');
+            // 🚨 VULNERABLE: No authorization check
+            adminDiv.innerHTML = `
+                <h4>All Users (Unauthorized Access!):</h4>
+                ${users.map(u => `<p>ID: ${u.id}, Username: ${u.username}, Role: ${u.role}</p>`).join('')}
+            `;
+            logAttack('Viewed all users without authorization');
+        }
+
+        function deleteUser() {
+            // 🚨 VULNERABLE: No authorization check for destructive action
+            const userId = prompt('Enter User ID to delete:');
+            if (userId) {
+                const userIndex = users.findIndex(u => u.id == userId);
+                if (userIndex > -1) {
+                    const deletedUser = users.splice(userIndex, 1)[0];
+                    alert(`User ${deletedUser.username} deleted!`);
+                    logAttack(`User deleted without authorization: ${deletedUser.username}`);
+                } else {
+                    alert('User not found');
+                }
+            }
+        }
+
+        function viewSystemLogs() {
+            const adminDiv = document.getElementById('adminData');
+            // 🚨 VULNERABLE: Sensitive system information exposed
+            adminDiv.innerHTML = `
+                <h4>System Logs (Sensitive Data!):</h4>
+                <p>Database: mysql://localhost:3306/webapp</p>
+                <p>Admin Password: super_secret_admin_pwd</p>
+                <p>API Key: sk_live_123456789</p>
+                <p>Last Backup: /backups/webapp_2024.sql</p>
+            `;
+            logAttack('Accessed sensitive system logs');
+        }
+
+        function updateSystemSettings() {
+            // 🚨 VULNERABLE: Critical system modification without proper checks
+            alert('System settings updated! (This could be very dangerous)');
+            logAttack('System settings modified without authorization');
+        }
+
+        // Logging functions
+        function logAttempt(username, password, success) {
+            const log = document.getElementById('loginAttempts');
+            const timestamp = new Date().toLocaleTimeString();
+            const status = success ? 'SUCCESS' : 'FAILED';
+            const statusClass = success ? 'success' : 'failure';
+            
+            const entry = document.createElement('div');
+            entry.innerHTML = `[${timestamp}] <span class="${statusClass}">${status}</span> - Username: ${username}, Password: ${password}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function logAttack(message) {
+            const log = document.getElementById('attackLog');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const entry = document.createElement('div');
+            entry.innerHTML = `[${timestamp}] <span style="color: #f44336; font-weight: bold;">ATTACK:</span> ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateStats() {
+            document.getElementById('totalAttempts').textContent = attemptCounter;
+            document.getElementById('failedAttempts').textContent = failedCounter;
+            const successRate = attemptCounter > 0 ? Math.round(((attemptCounter - failedCounter) / attemptCounter) * 100) : 0;
+            document.getElementById('successRate').textContent = successRate + '%';
+        }
+
+        function clearLogs() {
+            document.getElementById('loginAttempts').innerHTML = '<div style="color: #666;">Login attempts will be logged here...</div>';
+            document.getElementById('attackLog').innerHTML = '<div style="color: #666;">Attack attempt log will appear here...</div>';
+        }
+
+        // Initialize page
+        console.log('🚨 Vulnerable authentication system loaded');
+        console.log('⚠️  This system contains multiple authentication flaws!');
+        console.log('🎯 Try the various attack demonstrations');
+    </script>
+</body>
+</html> 

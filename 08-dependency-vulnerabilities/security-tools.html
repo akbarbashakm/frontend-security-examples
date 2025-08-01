@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Tools - Vulnerability Scanning</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Security Tools</h1>
+            <p>Popular security scanning and analysis tools</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Popular Security Tools:</strong>
+            <ul>
+                <li>npm audit - Node.js dependency scanning</li>
+                <li>Snyk - Vulnerability management platform</li>
+                <li>OWASP Dependency Check - Java dependency scanner</li>
+                <li>Retire.js - JavaScript library vulnerability scanner</li>
+                <li>Safety - Python dependency security checker</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <h3>📦 npm audit Demo</h3>
+            <p>Simulating npm security audit:</p>
+            <button onclick="runNpmAudit()" class="btn">Run npm audit</button>
+            <div id="npmResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔍 Snyk Vulnerability Scan</h3>
+            <p>Simulating Snyk security scanning:</p>
+            <button onclick="runSnykScan()" class="btn">Run Snyk Scan</button>
+            <div id="snykResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🛡️ OWASP Dependency Check</h3>
+            <p>Simulating OWASP dependency scanning:</p>
+            <button onclick="runOWASPScan()" class="btn">Run OWASP Scan</button>
+            <div id="owaspResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// ✅ SECURE: npm audit command
+npm audit
+npm audit fix
+npm audit --audit-level=moderate
+
+// ✅ SECURE: Snyk integration
+snyk test
+snyk monitor
+snyk wizard
+
+// ✅ SECURE: OWASP Dependency Check
+dependency-check --scan ./target
+dependency-check --format HTML --out ./reports
+
+// ✅ SECURE: Retire.js
+retire --path /path/to/project
+retire --outputformat json
+        </div>
+    </div>
+
+    <script>
+        function runNpmAudit() {
+            const resultsDiv = document.getElementById('npmResults');
+            
+            // Simulate npm audit results
+            const auditResults = {
+                vulnerabilities: {
+                    high: 2,
+                    medium: 5,
+                    low: 8
+                },
+                packages: {
+                    total: 45,
+                    vulnerable: 15,
+                    secure: 30
+                },
+                recommendations: [
+                    'Update express to 4.18.2',
+                    'Update lodash to 4.17.21',
+                    'Update moment to 2.29.4'
+                ]
+            };
+            
+            resultsDiv.innerHTML = `
+                <h4>📦 npm audit Results:</h4>
+                <p><strong>Vulnerabilities Found:</strong></p>
+                <ul>
+                    <li>High: ${auditResults.vulnerabilities.high}</li>
+                    <li>Medium: ${auditResults.vulnerabilities.medium}</li>
+                    <li>Low: ${auditResults.vulnerabilities.low}</li>
+                </ul>
+                
+                <p><strong>Packages:</strong></p>
+                <ul>
+                    <li>Total: ${auditResults.packages.total}</li>
+                    <li>Vulnerable: ${auditResults.packages.vulnerable}</li>
+                    <li>Secure: ${auditResults.packages.secure}</li>
+                </ul>
+                
+                <p><strong>Recommendations:</strong></p>
+                <ul>
+                    ${auditResults.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                </ul>
+                
+                <p>✅ Run <code>npm audit fix</code> to automatically fix vulnerabilities</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function runSnykScan() {
+            const resultsDiv = document.getElementById('snykResults');
+            
+            // Simulate Snyk scan results
+            const snykResults = {
+                issues: [
+                    {
+                        severity: 'high',
+                        title: 'SQL Injection in mysql2',
+                        cve: 'CVE-2023-1234',
+                        description: 'SQL injection vulnerability in mysql2 package'
+                    },
+                    {
+                        severity: 'medium',
+                        title: 'XSS in jquery',
+                        cve: 'CVE-2023-5678',
+                        description: 'Cross-site scripting vulnerability in jQuery'
+                    }
+                ],
+                summary: {
+                    total: 2,
+                    high: 1,
+                    medium: 1,
+                    low: 0
+                }
+            };
+            
+            let issuesHtml = '';
+            snykResults.issues.forEach(issue => {
+                issuesHtml += `
+                    <li>
+                        <strong>${issue.severity.toUpperCase()}:</strong> ${issue.title}
+                        <br><small>CVE: ${issue.cve}</small>
+                        <br><small>${issue.description}</small>
+                    </li>
+                `;
+            });
+            
+            resultsDiv.innerHTML = `
+                <h4>🔍 Snyk Security Scan Results:</h4>
+                <p><strong>Summary:</strong></p>
+                <ul>
+                    <li>Total Issues: ${snykResults.summary.total}</li>
+                    <li>High: ${snykResults.summary.high}</li>
+                    <li>Medium: ${snykResults.summary.medium}</li>
+                    <li>Low: ${snykResults.summary.low}</li>
+                </ul>
+                
+                <p><strong>Issues Found:</strong></p>
+                <ul>
+                    ${issuesHtml}
+                </ul>
+                
+                <p>✅ Run <code>snyk wizard</code> to fix vulnerabilities interactively</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function runOWASPScan() {
+            const resultsDiv = document.getElementById('owaspResults');
+            
+            // Simulate OWASP Dependency Check results
+            const owaspResults = {
+                vulnerabilities: [
+                    {
+                        name: 'Apache Log4j',
+                        severity: 'Critical',
+                        cve: 'CVE-2021-44228',
+                        description: 'Remote code execution vulnerability'
+                    },
+                    {
+                        name: 'Spring Framework',
+                        severity: 'High',
+                        cve: 'CVE-2022-22965',
+                        description: 'Remote code execution via Spring Expression Language'
+                    }
+                ],
+                summary: {
+                    total: 2,
+                    critical: 1,
+                    high: 1,
+                    medium: 0,
+                    low: 0
+                }
+            };
+            
+            let vulnHtml = '';
+            owaspResults.vulnerabilities.forEach(vuln => {
+                vulnHtml += `
+                    <li>
+                        <strong>${vuln.severity}:</strong> ${vuln.name}
+                        <br><small>CVE: ${vuln.cve}</small>
+                        <br><small>${vuln.description}</small>
+                    </li>
+                `;
+            });
+            
+            resultsDiv.innerHTML = `
+                <h4>🛡️ OWASP Dependency Check Results:</h4>
+                <p><strong>Vulnerability Summary:</strong></p>
+                <ul>
+                    <li>Total: ${owaspResults.summary.total}</li>
+                    <li>Critical: ${owaspResults.summary.critical}</li>
+                    <li>High: ${owaspResults.summary.high}</li>
+                    <li>Medium: ${owaspResults.summary.medium}</li>
+                    <li>Low: ${owaspResults.summary.low}</li>
+                </ul>
+                
+                <p><strong>Vulnerabilities Found:</strong></p>
+                <ul>
+                    ${vulnHtml}
+                </ul>
+                
+                <p>✅ Review and update vulnerable dependencies</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        console.log('🛡️ Security tools examples loaded');
+    </script>
+</body>
+</html> 

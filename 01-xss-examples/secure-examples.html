@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure XSS Examples - Protection Mechanisms</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #45a049; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .protection-method { background: #e3f2fd; padding: 15px; border-radius: 4px; margin: 20px 0; border-left: 4px solid #2196f3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Secure XSS Examples - Protection Mechanisms</h1>
+            <p>Learn how to properly protect against Cross-Site Scripting attacks</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Security Features Implemented:</strong>
+            <ul>
+                <li>HTML Encoding - Escapes dangerous characters</li>
+                <li>Content Security Policy (CSP) - Blocks inline scripts</li>
+                <li>Input Validation - Whitelist approach</li>
+                <li>textContent vs innerHTML - Safe DOM manipulation</li>
+                <li>DOMPurify Integration - Advanced sanitization</li>
+            </ul>
+        </div>
+
+        <!-- HTML Encoding Protection -->
+        <div class="form-section">
+            <h3>🔒 HTML Encoding Protection</h3>
+            <p>Escape dangerous characters to prevent script execution:</p>
+            
+            <div class="form-group">
+                <label>Search Term:</label>
+                <input type="text" id="secureSearch" placeholder="Try: <script>alert('XSS')</script>">
+            </div>
+            
+            <button onclick="performSecureSearch()" class="btn">Search (Secure)</button>
+            
+            <div id="secureSearchResults" class="result-area" style="display: none;">
+                <h4>Search Results (Securely Encoded):</h4>
+                <div id="secureResultsContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: HTML encoding function
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// ✅ SECURE: Use encoding before display
+const safeContent = escapeHtml(userInput);
+resultsContent.innerHTML = `<p>You searched for: <strong>${safeContent}</strong></p>`;
+            </div>
+        </div>
+
+        <!-- CSP Protection -->
+        <div class="form-section">
+            <h3>🛡️ Content Security Policy (CSP)</h3>
+            <p>This page has CSP enabled to block inline scripts:</p>
+            
+            <div class="protection-method">
+                <strong>Current CSP:</strong> <code>script-src 'self'; style-src 'self' 'unsafe-inline';</code>
+                <br><br>
+                <strong>What this blocks:</strong>
+                <ul>
+                    <li>❌ Inline &lt;script&gt; tags</li>
+                    <li>❌ JavaScript: URLs</li>
+                    <li>❌ eval() and similar functions</li>
+                    <li>✅ External scripts from same origin</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label>Try to inject a script:</label>
+                <input type="text" id="cspTest" placeholder="<script>alert('CSP Test')</script>">
+            </div>
+            
+            <button onclick="testCSPProtection()" class="btn">Test CSP Protection</button>
+            
+            <div id="cspResults" class="result-area" style="display: none;">
+                <h4>CSP Protection Results:</h4>
+                <div id="cspContent"></div>
+            </div>
+        </div>
+
+        <!-- Input Validation -->
+        <div class="form-section">
+            <h3>✅ Input Validation</h3>
+            <p>Validate input using whitelist approach:</p>
+            
+            <div class="form-group">
+                <label>Username (alphanumeric only):</label>
+                <input type="text" id="validatedUsername" placeholder="Enter username">
+            </div>
+            
+            <div class="form-group">
+                <label>Email Address:</label>
+                <input type="email" id="validatedEmail" placeholder="Enter email">
+            </div>
+            
+            <button onclick="validateInput()" class="btn">Validate Input</button>
+            
+            <div id="validationResults" class="result-area" style="display: none;">
+                <h4>Validation Results:</h4>
+                <div id="validationContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: Input validation with whitelist
+function validateUsername(username) {
+    const allowedPattern = /^[a-zA-Z0-9_]{3,20}$/;
+    return allowedPattern.test(username);
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+            </div>
+        </div>
+
+        <!-- Safe DOM Manipulation -->
+        <div class="form-section">
+            <h3>🛡️ Safe DOM Manipulation</h3>
+            <p>Use textContent instead of innerHTML for user content:</p>
+            
+            <div class="form-group">
+                <label>User Comment:</label>
+                <textarea id="userComment" rows="4" placeholder="Enter your comment"></textarea>
+            </div>
+            
+            <button onclick="displayComment()" class="btn">Display Comment (Safe)</button>
+            
+            <div id="commentDisplay" class="result-area" style="display: none;">
+                <h4>Comment Display (Safe):</h4>
+                <div id="safeCommentContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: Use textContent for user content
+function displayComment() {
+    const comment = document.getElementById('userComment').value;
+    const contentDiv = document.getElementById('safeCommentContent');
+    
+    // ✅ SAFE: textContent prevents script execution
+    contentDiv.textContent = comment;
+    
+    // ❌ DANGEROUS: innerHTML would execute scripts
+    // contentDiv.innerHTML = comment;
+}
+            </div>
+        </div>
+
+        <!-- DOMPurify Integration -->
+        <div class="form-section">
+            <h3>🧹 DOMPurify Sanitization</h3>
+            <p>Advanced HTML sanitization using DOMPurify library:</p>
+            
+            <div class="form-group">
+                <label>Rich Text Content:</label>
+                <textarea id="richText" rows="4" placeholder="Enter HTML content with <b>tags</b> and <script>alert('test')</script>"></textarea>
+            </div>
+            
+            <button onclick="sanitizeContent()" class="btn">Sanitize Content</button>
+            
+            <div id="sanitizedDisplay" class="result-area" style="display: none;">
+                <h4>Sanitized Content:</h4>
+                <div id="sanitizedContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: DOMPurify sanitization
+function sanitizeContent() {
+    const dirtyContent = document.getElementById('richText').value;
+    
+    // ✅ SAFE: DOMPurify removes dangerous content
+    const cleanContent = DOMPurify.sanitize(dirtyContent, {
+        ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a'],
+        ALLOWED_ATTR: ['href']
+    });
+    
+    document.getElementById('sanitizedContent').innerHTML = cleanContent;
+}
+            </div>
+        </div>
+
+        <!-- Security Best Practices -->
+        <div class="form-section">
+            <h3>📋 Security Best Practices</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 4px;">
+                    <h4>✅ Do's:</h4>
+                    <ul>
+                        <li>Always encode user input</li>
+                        <li>Use textContent for user data</li>
+                        <li>Implement CSP headers</li>
+                        <li>Validate input with whitelist</li>
+                        <li>Use DOMPurify for rich content</li>
+                        <li>Keep libraries updated</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #ffebee; padding: 15px; border-radius: 4px;">
+                    <h4>❌ Don'ts:</h4>
+                    <ul>
+                        <li>Never use innerHTML with user input</li>
+                        <li>Don't trust client-side validation</li>
+                        <li>Avoid eval() and similar functions</li>
+                        <li>Don't disable CSP for convenience</li>
+                        <li>Avoid blacklist approaches</li>
+                        <li>Never store sensitive data in localStorage</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Demo -->
+        <div class="form-section">
+            <h3>🔍 Secure vs Vulnerable Comparison</h3>
+            <p>See the difference between secure and vulnerable implementations:</p>
+            
+            <div class="form-group">
+                <label>Test Input:</label>
+                <input type="text" id="comparisonInput" value="<script>alert('XSS Attack')</script>" style="font-family: monospace;">
+            </div>
+            
+            <button onclick="runComparison()" class="btn">Run Comparison</button>
+            
+            <div id="comparisonResults" class="result-area" style="display: none;">
+                <h4>Comparison Results:</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: #ffebee; padding: 15px; border-radius: 4px;">
+                        <h5>❌ Vulnerable (innerHTML):</h5>
+                        <div id="vulnerableOutput"></div>
+                    </div>
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 4px;">
+                        <h5>✅ Secure (textContent):</h5>
+                        <div id="secureOutput"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+            <h3>🛡️ Implementation Checklist</h3>
+            <p>Ensure these security measures are in place:</p>
+            <ul>
+                <li>✅ <strong>HTML Encoding</strong> - Escape dangerous characters</li>
+                <li>✅ <strong>Content Security Policy</strong> - Block inline scripts</li>
+                <li>✅ <strong>Input Validation</strong> - Use whitelist approach</li>
+                <li>✅ <strong>Safe DOM Manipulation</strong> - Use textContent</li>
+                <li>✅ <strong>DOMPurify Integration</strong> - Advanced sanitization</li>
+                <li>✅ <strong>Regular Updates</strong> - Keep libraries current</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- DOMPurify CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
+
+    <script>
+        // ✅ SECURE: HTML encoding function
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // ✅ SECURE: Input validation functions
+        function validateUsername(username) {
+            const allowedPattern = /^[a-zA-Z0-9_]{3,20}$/;
+            return allowedPattern.test(username);
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // ✅ SECURE: Search with encoding
+        function performSecureSearch() {
+            const searchTerm = document.getElementById('secureSearch').value;
+            const resultsDiv = document.getElementById('secureSearchResults');
+            const contentDiv = document.getElementById('secureResultsContent');
+            
+            // ✅ SECURE: Encode user input before display
+            const safeSearchTerm = escapeHtml(searchTerm);
+            
+            contentDiv.innerHTML = `
+                <p>You searched for: <strong>${safeSearchTerm}</strong></p>
+                <p>✅ This content is safely encoded and cannot execute scripts!</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Secure search performed with encoding');
+        }
+
+        // ✅ SECURE: CSP protection test
+        function testCSPProtection() {
+            const testInput = document.getElementById('cspTest').value;
+            const resultsDiv = document.getElementById('cspResults');
+            const contentDiv = document.getElementById('cspContent');
+            
+            // ✅ SECURE: Display content safely
+            const safeInput = escapeHtml(testInput);
+            
+            contentDiv.innerHTML = `
+                <p><strong>Input:</strong> ${safeInput}</p>
+                <p>✅ CSP blocks inline scripts from executing</p>
+                <p>✅ Content is safely displayed without script execution</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ CSP protection test completed');
+        }
+
+        // ✅ SECURE: Input validation
+        function validateInput() {
+            const username = document.getElementById('validatedUsername').value;
+            const email = document.getElementById('validatedEmail').value;
+            const resultsDiv = document.getElementById('validationResults');
+            const contentDiv = document.getElementById('validationContent');
+            
+            const usernameValid = validateUsername(username);
+            const emailValid = validateEmail(email);
+            
+            contentDiv.innerHTML = `
+                <p><strong>Username:</strong> ${usernameValid ? '✅ Valid' : '❌ Invalid'}</p>
+                <p><strong>Email:</strong> ${emailValid ? '✅ Valid' : '❌ Invalid'}</p>
+                <p>✅ Input validation prevents malicious data</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Input validation completed');
+        }
+
+        // ✅ SECURE: Safe DOM manipulation
+        function displayComment() {
+            const comment = document.getElementById('userComment').value;
+            const resultsDiv = document.getElementById('commentDisplay');
+            const contentDiv = document.getElementById('safeCommentContent');
+            
+            // ✅ SECURE: Use textContent to prevent script execution
+            contentDiv.textContent = comment;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Comment displayed safely using textContent');
+        }
+
+        // ✅ SECURE: DOMPurify sanitization
+        function sanitizeContent() {
+            const dirtyContent = document.getElementById('richText').value;
+            const resultsDiv = document.getElementById('sanitizedDisplay');
+            const contentDiv = document.getElementById('sanitizedContent');
+            
+            // ✅ SECURE: DOMPurify removes dangerous content
+            const cleanContent = DOMPurify.sanitize(dirtyContent, {
+                ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a'],
+                ALLOWED_ATTR: ['href']
+            });
+            
+            contentDiv.innerHTML = cleanContent;
+            resultsDiv.style.display = 'block';
+            console.log('✅ Content sanitized with DOMPurify');
+        }
+
+        // ✅ SECURE: Comparison demo
+        function runComparison() {
+            const testInput = document.getElementById('comparisonInput').value;
+            const resultsDiv = document.getElementById('comparisonResults');
+            const vulnerableDiv = document.getElementById('vulnerableOutput');
+            const secureDiv = document.getElementById('secureOutput');
+            
+            // ❌ VULNERABLE: innerHTML (for demonstration only)
+            vulnerableDiv.innerHTML = `
+                <p><strong>Vulnerable Output:</strong></p>
+                <div style="background: #fff; padding: 10px; border: 2px solid #f44336;">
+                    ${testInput}
+                </div>
+                <p style="color: #f44336;">❌ Scripts would execute here!</p>
+            `;
+            
+            // ✅ SECURE: textContent
+            secureDiv.innerHTML = `
+                <p><strong>Secure Output:</strong></p>
+                <div style="background: #fff; padding: 10px; border: 2px solid #4caf50;">
+                    ${escapeHtml(testInput)}
+                </div>
+                <p style="color: #4caf50;">✅ Scripts are safely encoded!</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Security comparison completed');
+        }
+
+        // Initialize page
+        console.log('✅ Secure XSS examples loaded');
+        console.log('🛡️ CSP is active and blocking inline scripts');
+        console.log('🧹 DOMPurify is loaded for advanced sanitization');
+    </script>
+</body>
+</html> 

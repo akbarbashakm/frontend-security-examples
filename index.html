@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frontend Security Learning Hub 🛡️</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .security-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .security-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .security-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .card-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .vulnerability-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .vulnerability-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .vulnerability-list li:before {
+            content: '🎯';
+            margin-right: 10px;
+        }
+        
+        .demo-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .demo-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        .demo-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .demo-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn-vulnerable {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+        
+        .btn-secure {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+        
+        .btn-demo {
+            background: linear-gradient(45deg, #45b7d1, #96c93d);
+            color: white;
+        }
+        
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-complete {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .status-pending {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-header h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .demo-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .demo-tab {
+            padding: 15px 25px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .demo-tab.active {
+            color: #2c3e50;
+            border-bottom-color: #3498db;
+        }
+        
+        .demo-content {
+            display: none;
+        }
+        
+        .demo-content.active {
+            display: block;
+        }
+        
+        .xss-demo {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .csrf-demo {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .csp-demo {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .input-demo {
+            background: #fce4ec;
+            border: 2px solid #e91e63;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .form-group {
+            margin: 15px 0;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .result-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            min-height: 100px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .security-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Frontend Security Learning Hub</h1>
+            <p>Master web security through interactive examples and real-world vulnerabilities</p>
+        </div>
+
+        <div class="security-grid">
+            <!-- XSS Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <div class="card-title">Cross-Site Scripting (XSS)</div>
+                </div>
+                <div class="card-description">
+                    Learn how malicious scripts can be injected into web pages and executed in users' browsers.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>Reflected XSS - Scripts from URL parameters</li>
+                    <li>Stored XSS - Scripts saved in database</li>
+                    <li>DOM-based XSS - Client-side script injection</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="01-xss-examples/vulnerable-reflected.html" class="demo-btn btn-vulnerable">Vulnerable Demo</a>
+                        <a href="01-xss-examples/secure-examples.html" class="demo-btn btn-secure">Secure Demo</a>
+                        <a href="01-xss-examples/xss-payloads.md" class="demo-btn btn-demo">Payloads</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSRF Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">🔄</div>
+                    <div class="card-title">Cross-Site Request Forgery (CSRF)</div>
+                </div>
+                <div class="card-description">
+                    Understand how attackers can trick users into performing unwanted actions on authenticated sites.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>GET-based CSRF - URL manipulation attacks</li>
+                    <li>POST-based CSRF - Form submission attacks</li>
+                    <li>JSON-based CSRF - API endpoint attacks</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="02-csrf-examples/vulnerable-bank.html" class="demo-btn btn-vulnerable">Banking Demo</a>
+                        <a href="02-csrf-examples/secure-examples.html" class="demo-btn btn-secure">Secure Demo</a>
+                        <a href="02-csrf-examples/attack-pages/" class="demo-btn btn-demo">Attack Pages</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSP Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">🛡️</div>
+                    <div class="card-title">Content Security Policy (CSP)</div>
+                </div>
+                <div class="card-description">
+                    Learn how to control which resources can be loaded and executed in your web application.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>Script-src directives - Control script execution</li>
+                    <li>Style-src directives - Control CSS loading</li>
+                    <li>Frame-src directives - Control iframe content</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="03-csp-examples/no-csp.html" class="demo-btn btn-vulnerable">No CSP Demo</a>
+                        <a href="03-csp-examples/strict-csp.html" class="demo-btn btn-secure">Strict CSP</a>
+                        <a href="03-csp-examples/csp-bypass-attempts.html" class="demo-btn btn-demo">Bypass Attempts</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">🔐</div>
+                    <div class="card-title">Authentication & Authorization</div>
+                </div>
+                <div class="card-description">
+                    Explore common authentication flaws and proper authorization mechanisms.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>Broken Authentication - Weak login systems</li>
+                    <li>Broken Access Control - Privilege escalation</li>
+                    <li>Session Management - Session hijacking</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="04-auth-examples/vulnerable-login.html" class="demo-btn btn-vulnerable">Weak Auth</a>
+                        <a href="04-auth-examples/secure-auth.html" class="demo-btn btn-secure">Secure Auth</a>
+                        <a href="04-auth-examples/auth-bypass-techniques.html" class="demo-btn btn-demo">Bypass Techniques</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Validation Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">📝</div>
+                    <div class="card-title">Input Validation & Sanitization</div>
+                </div>
+                <div class="card-description">
+                    Master the art of validating and sanitizing user input to prevent various attacks.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>SQL Injection - Database manipulation</li>
+                    <li>Command Injection - System command execution</li>
+                    <li>Path Traversal - File system access</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="05-input-validation/vulnerable-form.html" class="demo-btn btn-vulnerable">Vulnerable Form</a>
+                        <a href="05-input-validation/secure-form.html" class="demo-btn btn-secure">Secure Form</a>
+                        <a href="05-input-validation/validation-libraries.html" class="demo-btn btn-demo">Validation Libraries</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secure Storage Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">💾</div>
+                    <div class="card-title">Secure Data Storage</div>
+                </div>
+                <div class="card-description">
+                    Learn encryption techniques and secure storage practices for sensitive data.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>Encryption at Rest - Data protection</li>
+                    <li>Key Management - Secure key handling</li>
+                    <li>Session Security - Secure session storage</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="06-secure-storage/vulnerable-storage.html" class="demo-btn btn-vulnerable">Insecure Storage</a>
+                        <a href="06-secure-storage/advanced-storage.html" class="demo-btn btn-secure">Secure Storage</a>
+                        <a href="06-secure-storage/key-management.html" class="demo-btn btn-demo">Key Management</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HTTPS/TLS Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">🔒</div>
+                    <div class="card-title">HTTPS & TLS Security</div>
+                </div>
+                <div class="card-description">
+                    Understand transport layer security and secure communication protocols.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>Certificate Management - SSL/TLS certificates</li>
+                    <li>Cipher Suites - Encryption algorithms</li>
+                    <li>Security Headers - HTTP security headers</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="07-https-tls/vulnerable-http.html" class="demo-btn btn-vulnerable">HTTP Demo</a>
+                        <a href="07-https-tls/advanced-tls.html" class="demo-btn btn-secure">HTTPS Demo</a>
+                        <a href="07-https-tls/tls-testing.html" class="demo-btn btn-demo">TLS Testing</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dependency Vulnerabilities Card -->
+            <div class="security-card">
+                <div class="card-header">
+                    <div class="card-icon">📦</div>
+                    <div class="card-title">Dependency Vulnerabilities</div>
+                </div>
+                <div class="card-description">
+                    Discover supply chain attacks and third-party library security issues.
+                </div>
+                <ul class="vulnerability-list">
+                    <li>Supply Chain Attacks - Malicious dependencies</li>
+                    <li>Vulnerability Scanning - Automated security checks</li>
+                    <li>Dependency Management - Secure package handling</li>
+                </ul>
+                <div class="demo-section">
+                    <div class="demo-title">Interactive Examples:</div>
+                    <div class="demo-buttons">
+                        <a href="08-dependency-vulnerabilities/vulnerable-dependencies.html" class="demo-btn btn-vulnerable">Vulnerable Dependencies</a>
+                        <a href="08-dependency-vulnerabilities/secure-dependencies.html" class="demo-btn btn-secure">Secure Dependencies</a>
+                        <a href="08-dependency-vulnerabilities/security-tools.html" class="demo-btn btn-demo">Security Tools</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Demo Section -->
+        <div class="interactive-demo">
+            <div class="demo-header">
+                <h2>🎮 Live Security Demo</h2>
+                <p>Try these interactive examples right in your browser!</p>
+            </div>
+
+            <div class="demo-tabs">
+                <button class="demo-tab active" onclick="showTab('xss')">XSS Attack</button>
+                <button class="demo-tab" onclick="showTab('csrf')">CSRF Attack</button>
+                <button class="demo-tab" onclick="showTab('csp')">CSP Protection</button>
+                <button class="demo-tab" onclick="showTab('input')">Input Validation</button>
+            </div>
+
+            <!-- XSS Demo -->
+            <div id="xss-demo" class="demo-content active">
+                <div class="xss-demo">
+                    <h3>🎯 Cross-Site Scripting (XSS) Demo</h3>
+                    <p>Try injecting malicious scripts into this search box:</p>
+                    
+                    <div class="form-group">
+                        <label>Search Term:</label>
+                        <input type="text" id="xssSearch" placeholder="Enter search term...">
+                    </div>
+                    
+                    <button onclick="performXSSSearch()" class="demo-btn btn-vulnerable">Search</button>
+                    
+                    <div class="result-area" id="xssResults">
+                        <p>Search results will appear here...</p>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <strong>Try these payloads:</strong>
+                        <ul style="margin-top: 10px; font-family: monospace; font-size: 12px;">
+                            <li>&lt;script&gt;alert('XSS!')&lt;/script&gt;</li>
+                            <li>&lt;img src=x onerror=alert('XSS')&gt;</li>
+                            <li>&lt;svg onload=alert('XSS')&gt;&lt;/svg&gt;</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSRF Demo -->
+            <div id="csrf-demo" class="demo-content">
+                <div class="csrf-demo">
+                    <h3>🔄 Cross-Site Request Forgery (CSRF) Demo</h3>
+                    <p>Simulate a banking transfer attack:</p>
+                    
+                    <div class="form-group">
+                        <label>Transfer Amount:</label>
+                        <input type="number" id="csrfAmount" value="1000" min="1" max="10000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Recipient Account:</label>
+                        <input type="text" id="csrfRecipient" value="999999999" placeholder="Account number">
+                    </div>
+                    
+                    <button onclick="performCSRFTransfer()" class="demo-btn btn-vulnerable">Transfer Money</button>
+                    
+                    <div class="result-area" id="csrfResults">
+                        <p>Transfer status will appear here...</p>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <strong>This simulates a CSRF attack without CSRF protection!</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CSP Demo -->
+            <div id="csp-demo" class="demo-content">
+                <div class="csp-demo">
+                    <h3>🛡️ Content Security Policy (CSP) Demo</h3>
+                    <p>Test CSP protection against script injection:</p>
+                    
+                    <div class="form-group">
+                        <label>Enter JavaScript code:</label>
+                        <textarea id="cspScript" rows="3" placeholder="Try: alert('CSP Test')"></textarea>
+                    </div>
+                    
+                    <button onclick="testCSP()" class="demo-btn btn-demo">Test CSP</button>
+                    
+                    <div class="result-area" id="cspResults">
+                        <p>CSP test results will appear here...</p>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <strong>Current CSP:</strong> <code>script-src 'self'; style-src 'self' 'unsafe-inline';</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Validation Demo -->
+            <div id="input-demo" class="demo-content">
+                <div class="input-demo">
+                    <h3>📝 Input Validation Demo</h3>
+                    <p>Test input validation and sanitization:</p>
+                    
+                    <div class="form-group">
+                        <label>Email Address:</label>
+                        <input type="email" id="validationEmail" placeholder="Enter email...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Phone Number:</label>
+                        <input type="tel" id="validationPhone" placeholder="Enter phone...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>User Input (try SQL injection):</label>
+                        <input type="text" id="validationInput" placeholder="Try: ' OR 1=1 --">
+                    </div>
+                    
+                    <button onclick="validateInput()" class="demo-btn btn-demo">Validate Input</button>
+                    
+                    <div class="result-area" id="validationResults">
+                        <p>Validation results will appear here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.demo-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.demo-tab');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName + '-demo').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // XSS Demo
+        function performXSSSearch() {
+            const searchTerm = document.getElementById('xssSearch').value;
+            const resultsDiv = document.getElementById('xssResults');
+            
+            // 🚨 VULNERABLE: Direct innerHTML assignment
+            resultsDiv.innerHTML = `
+                <h4>Search Results for: ${searchTerm}</h4>
+                <p>Found 5 results matching your search.</p>
+                <div style="background: #fff; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    ${searchTerm}
+                </div>
+            `;
+        }
+
+        // CSRF Demo
+        function performCSRFTransfer() {
+            const amount = document.getElementById('csrfAmount').value;
+            const recipient = document.getElementById('csrfRecipient').value;
+            const resultsDiv = document.getElementById('csrfResults');
+            
+            // 🚨 VULNERABLE: No CSRF token validation
+            resultsDiv.innerHTML = `
+                <h4>💰 Transfer Successful!</h4>
+                <p><strong>Amount:</strong> $${amount}</p>
+                <p><strong>Recipient:</strong> ${recipient}</p>
+                <p><strong>Status:</strong> Completed</p>
+                <p style="color: #e74c3c; font-weight: bold;">⚠️ This transfer was vulnerable to CSRF!</p>
+            `;
+        }
+
+        // CSP Demo
+        function testCSP() {
+            const script = document.getElementById('cspScript').value;
+            const resultsDiv = document.getElementById('cspResults');
+            
+            try {
+                // Try to execute the script
+                eval(script);
+                resultsDiv.innerHTML = `
+                    <h4>✅ Script Executed Successfully</h4>
+                    <p>The script ran without CSP restrictions.</p>
+                    <p><strong>Script:</strong> <code>${script}</code></p>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <h4>❌ Script Execution Failed</h4>
+                    <p>Error: ${error.message}</p>
+                    <p><strong>Script:</strong> <code>${script}</code></p>
+                `;
+            }
+        }
+
+        // Input Validation Demo
+        function validateInput() {
+            const email = document.getElementById('validationEmail').value;
+            const phone = document.getElementById('validationPhone').value;
+            const input = document.getElementById('validationInput').value;
+            const resultsDiv = document.getElementById('validationResults');
+            
+            let results = '<h4>📝 Input Validation Results</h4>';
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isEmailValid = emailRegex.test(email);
+            results += `<p><strong>Email:</strong> ${isEmailValid ? '✅ Valid' : '❌ Invalid'}</p>`;
+            
+            // Phone validation
+            const phoneRegex = /^[\d\s\-\(\)]{10,}$/;
+            const isPhoneValid = phoneRegex.test(phone);
+            results += `<p><strong>Phone:</strong> ${isPhoneValid ? '✅ Valid' : '❌ Invalid'}</p>`;
+            
+            // SQL injection check
+            const sqlPatterns = /('|"|;|--|DROP|DELETE|INSERT|UPDATE|SELECT)/i;
+            const hasSQLInjection = sqlPatterns.test(input);
+            results += `<p><strong>SQL Injection Check:</strong> ${hasSQLInjection ? '🚨 Potential SQL injection detected!' : '✅ No SQL injection patterns'}</p>`;
+            
+            // XSS check
+            const xssPatterns = /(<|>|script|javascript|on\w+\s*=)/i;
+            const hasXSS = xssPatterns.test(input);
+            results += `<p><strong>XSS Check:</strong> ${hasXSS ? '🚨 Potential XSS detected!' : '✅ No XSS patterns'}</p>`;
+            
+            resultsDiv.innerHTML = results;
+        }
+
+        // Initialize page
+        console.log('🛡️ Frontend Security Learning Hub loaded!');
+        console.log('🎯 Try the interactive demos to learn about web security vulnerabilities');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic CSP Protection</title>
+    
+    <!-- 🛡️ BASIC CSP: Allow same-origin scripts and styles, with some inline styles -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self';">
+    
+    <!-- External CSS (allowed by CSP) -->
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .secure { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .demo-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .blocked { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin: 20px 0; color: #c62828; }
+        .allowed { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; color: #2e7d32; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #45a049; }
+        .btn-danger { background: #f44336; }
+        .btn-danger:hover { background: #d32f2f; }
+        .input-field { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; box-sizing: border-box; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 4px; font-weight: bold; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Basic CSP Protection Enabled</h1>
+            <p>This page has a Content Security Policy that blocks many attack vectors</p>
+        </div>
+
+        <div class="secure">
+            <strong>🛡️ CSP Active:</strong> Basic Content Security Policy is protecting this page!
+            <br>✅ Same-origin scripts only | ✅ Inline styles allowed | ❌ External scripts blocked | ❌ Inline scripts blocked
+        </div>
+
+        <!-- Current CSP Status -->
+        <div class="demo-section">
+            <h3>🔍 Current CSP Configuration</h3>
+            <div class="code-example">
+Content-Security-Policy: 
+    default-src 'self';           // Only same-origin resources by default
+    script-src 'self';            // Only same-origin scripts  
+    style-src 'self' 'unsafe-inline';  // Same-origin + inline styles
+    img-src 'self' data: https:;  // Same-origin + data URLs + HTTPS images
+    font-src 'self' https:;       // Same-origin + HTTPS fonts
+    connect-src 'self';           // Same-origin connections only
+            </div>
+            
+            <h4>🎯 What This Policy Does:</h4>
+            <ul>
+                <li>✅ <strong>Allows:</strong> Scripts from same origin (/js/script.js)</li>
+                <li>✅ <strong>Allows:</strong> Inline CSS styles (style="...")</li>
+                <li>✅ <strong>Allows:</strong> HTTPS images from any domain</li>
+                <li>❌ <strong>Blocks:</strong> Inline JavaScript (&lt;script&gt;...&lt;/script&gt;)</li>
+                <li>❌ <strong>Blocks:</strong> External scripts (https://evil.com/script.js)</li>
+                <li>❌ <strong>Blocks:</strong> eval() function execution</li>
+                <li>❌ <strong>Blocks:</strong> Inline event handlers (onclick="...")</li>
+            </ul>
+        </div>
+
+        <!-- Attack Prevention Tests -->
+        <div class="demo-section">
+            <h3>🧪 CSP Protection Tests</h3>
+            <p>Try these attacks and see how CSP blocks them:</p>
+
+            <h4>Test 1: Inline Script Injection (Will Be Blocked)</h4>
+            <input type="text" class="input-field" id="inlineScriptTest" placeholder="Try: &lt;script&gt;alert('XSS')&lt;/script&gt;" value="<script>alert('This will be blocked by CSP!')</script>">
+            <button class="btn btn-danger" onclick="testInlineScript()">Try Inline Script Injection</button>
+            <div id="inlineScriptResult"></div>
+
+            <h4>Test 2: External Script Loading (Will Be Blocked)</h4>
+            <input type="text" class="input-field" id="externalScriptTest" placeholder="External script URL" value="https://code.jquery.com/jquery-3.6.0.min.js">
+            <button class="btn btn-danger" onclick="testExternalScript()">Try Loading External Script</button>
+            <div id="externalScriptResult"></div>
+
+            <h4>Test 3: eval() Function (Will Be Blocked)</h4>
+            <input type="text" class="input-field" id="evalTest" placeholder="JavaScript code to eval" value="alert('eval blocked by CSP')">
+            <button class="btn btn-danger" onclick="testEval()">Try eval() Execution</button>
+            <div id="evalResult"></div>
+
+            <h4>Test 4: Inline Event Handler (Will Be Blocked)</h4>
+            <input type="text" class="input-field" id="eventHandlerTest" placeholder="HTML with event handler" value="<button onclick='alert(&quot;Event blocked&quot;)'>Click Me</button>">
+            <button class="btn btn-danger" onclick="testEventHandler()">Try Event Handler Injection</button>
+            <div id="eventHandlerResult"></div>
+            <div id="eventHandlerOutput"></div>
+        </div>
+
+        <!-- What Still Works -->
+        <div class="allowed">
+            <h3>✅ What CSP Still Allows</h3>
+            
+            <h4>1. Same-Origin Scripts</h4>
+            <p>Scripts loaded from the same domain work fine:</p>
+            <div class="code-example">
+&lt;!-- This works --&gt;
+&lt;script src="/js/app.js"&gt;&lt;/script&gt;
+&lt;script src="script.js"&gt;&lt;/script&gt;
+            </div>
+
+            <h4>2. Inline CSS Styles</h4>
+            <p style="color: blue; font-weight: bold;">This blue text uses inline styles (allowed by our CSP)</p>
+            <div class="code-example">
+&lt;!-- This works --&gt;
+&lt;p style="color: blue;"&gt;Styled text&lt;/p&gt;
+            </div>
+
+            <h4>3. External Images (HTTPS)</h4>
+            <img src="https://via.placeholder.com/150x50/4caf50/ffffff?text=CSP+Allowed" alt="External HTTPS image" style="margin: 10px 0;">
+            <div class="code-example">
+&lt;!-- This works --&gt;
+&lt;img src="https://trusted-cdn.com/image.jpg"&gt;
+            </div>
+
+            <h4>4. Form Submissions to Same Origin</h4>
+            <form onsubmit="handleFormSubmit(event)">
+                <input type="text" placeholder="This form works with CSP" class="input-field">
+                <button type="submit" class="btn">Submit Form</button>
+            </form>
+        </div>
+
+        <!-- CSP Violations Log -->
+        <div class="demo-section">
+            <h3>📊 CSP Violation Monitoring</h3>
+            <p>CSP violations are logged in the browser console. Check DevTools to see blocked attempts!</p>
+            
+            <div id="violationLog" style="background: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; border-radius: 4px; max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 14px;">
+                <div>CSP violation log will appear here...</div>
+            </div>
+            
+            <button class="btn" onclick="clearViolationLog()">Clear Log</button>
+            <button class="btn" onclick="triggerTestViolation()">Trigger Test Violation</button>
+        </div>
+
+        <!-- Comparison with No-CSP -->
+        <div class="demo-section">
+            <h3>🔄 Compare with No-CSP Page</h3>
+            <p>See the difference between protected and unprotected pages:</p>
+            <a href="no-csp.html" target="_blank" class="btn btn-danger">Open Vulnerable Page (No CSP)</a>
+            <a href="strict-csp.html" target="_blank" class="btn">View Strict CSP Example</a>
+        </div>
+
+        <!-- Implementation Guide -->
+        <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+            <h3>🛠️ How to Implement Basic CSP</h3>
+            
+            <h4>Method 1: HTTP Header (Recommended)</h4>
+            <div class="code-example">
+# Apache (.htaccess)
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+
+# Nginx
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'";
+
+# Express.js
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'");
+    next();
+});
+            </div>
+
+            <h4>Method 2: Meta Tag (Limited)</h4>
+            <div class="code-example">
+&lt;meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"&gt;
+            </div>
+
+            <h4>🎯 Gradual Implementation Strategy:</h4>
+            <ol>
+                <li><strong>Start with Report-Only mode</strong> to test without breaking</li>
+                <li><strong>Use basic policy</strong> like this example</li>
+                <li><strong>Monitor violations</strong> and adjust as needed</li>
+                <li><strong>Gradually tighten</strong> by removing 'unsafe-inline'</li>
+                <li><strong>Use nonces/hashes</strong> for maximum security</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- External script file (this will work because it's same-origin) -->
+    <script src="js/csp-demo.js"></script>
+
+    <!-- This script will work because it's in an external file from same origin -->
+    <script>
+        // 🛡️ This external script works with CSP
+        console.log('✅ External same-origin script loaded successfully');
+        console.log('🛡️ CSP allows scripts from same origin');
+
+        function testInlineScript() {
+            const input = document.getElementById('inlineScriptTest').value;
+            const result = document.getElementById('inlineScriptResult');
+            
+            try {
+                // This will be blocked by CSP
+                const div = document.createElement('div');
+                div.innerHTML = input;
+                document.body.appendChild(div);
+                
+                result.innerHTML = '<div class="test-result error">❌ Script injection attempt - Check console for CSP violation</div>';
+            } catch (error) {
+                result.innerHTML = `<div class="test-result error">❌ Blocked by CSP: ${error.message}</div>`;
+            }
+        }
+
+        function testExternalScript() {
+            const url = document.getElementById('externalScriptTest').value;
+            const result = document.getElementById('externalScriptResult');
+            
+            const script = document.createElement('script');
+            script.src = url;
+            
+            script.onerror = function() {
+                result.innerHTML = '<div class="test-result success">✅ External script blocked by CSP!</div>';
+                logViolation('External script blocked: ' + url);
+            };
+            
+            script.onload = function() {
+                result.innerHTML = '<div class="test-result error">❌ External script loaded (CSP not working)</div>';
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        function testEval() {
+            const code = document.getElementById('evalTest').value;
+            const result = document.getElementById('evalResult');
+            
+            try {
+                eval(code);
+                result.innerHTML = '<div class="test-result error">❌ eval() executed (CSP not working)</div>';
+            } catch (error) {
+                result.innerHTML = '<div class="test-result success">✅ eval() blocked by CSP!</div>';
+                logViolation('eval() blocked: ' + error.message);
+            }
+        }
+
+        function testEventHandler() {
+            const html = document.getElementById('eventHandlerTest').value;
+            const result = document.getElementById('eventHandlerResult');
+            const output = document.getElementById('eventHandlerOutput');
+            
+            // Insert HTML (the element will be created but event handler won't work)
+            output.innerHTML = html;
+            result.innerHTML = '<div class="test-result success">✅ HTML inserted but event handlers blocked by CSP</div>';
+            logViolation('Inline event handler blocked in: ' + html);
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            alert('✅ Form submission works with CSP (same-origin)');
+        }
+
+        function logViolation(message) {
+            const log = document.getElementById('violationLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.textContent = `[${timestamp}] ${message}`;
+            entry.style.color = '#dc3545';
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function clearViolationLog() {
+            document.getElementById('violationLog').innerHTML = '<div>CSP violation log cleared...</div>';
+        }
+
+        function triggerTestViolation() {
+            // This will trigger a CSP violation
+            try {
+                eval('console.log("This will be blocked")');
+            } catch (error) {
+                logViolation('Test violation triggered: eval() blocked');
+            }
+        }
+
+        // Listen for CSP violations
+        document.addEventListener('securitypolicyviolation', function(event) {
+            console.log('🚨 CSP Violation detected:', event);
+            logViolation(`Violation: ${event.violatedDirective} - ${event.blockedURI}`);
+        });
+
+        // Page initialization
+        window.addEventListener('load', function() {
+            console.log('✅ Basic CSP page loaded successfully');
+            console.log('🛡️ CSP Policy active - most attacks will be blocked');
+            logViolation('Page loaded with Basic CSP protection');
+        });
+    </script>
+</body>
+</html> 

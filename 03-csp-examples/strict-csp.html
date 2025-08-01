@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strict CSP - Comprehensive Protection</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-random123'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #2196f3; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .btn { padding: 10px 20px; background: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Strict Content Security Policy</h1>
+            <p>Comprehensive CSP protection with nonces and strict directives</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Strict CSP Active:</strong>
+            <ul>
+                <li>Script-src: 'self' with nonces only</li>
+                <li>Frame-src: 'none' (no iframes)</li>
+                <li>Object-src: 'none' (no plugins)</li>
+                <li>Base-uri: 'self' (no base tag hijacking)</li>
+                <li>Form-action: 'self' (no form hijacking)</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <h3>🔒 CSP Protection Test</h3>
+            <p>This page has strict CSP enabled. Try to inject scripts:</p>
+            
+            <div class="form-group">
+                <label>Test Input:</label>
+                <input type="text" id="cspTest" value="<script>alert('CSP Test')</script>" style="width: 100%; padding: 10px;">
+            </div>
+            
+            <button onclick="testCSP()" class="btn">Test CSP Protection</button>
+            
+            <div id="cspResults" class="result-area" style="display: none;">
+                <h4>CSP Protection Results:</h4>
+                <div id="cspContent"></div>
+            </div>
+        </div>
+
+        <div class="code-example">
+// ✅ SECURE: Strict CSP Configuration
+&lt;meta http-equiv="Content-Security-Policy" 
+      content="default-src 'self'; 
+               script-src 'self' 'nonce-random123'; 
+               style-src 'self' 'unsafe-inline'; 
+               img-src 'self' data: https:; 
+               font-src 'self' https:; 
+               connect-src 'self'; 
+               frame-src 'none'; 
+               object-src 'none'; 
+               base-uri 'self'; 
+               form-action 'self';"&gt;
+
+// ✅ SECURE: Only nonce-based scripts allowed
+&lt;script nonce="random123"&gt;
+    // This script will execute
+&lt;/script&gt;
+
+// ❌ BLOCKED: Inline scripts without nonce
+&lt;script&gt;alert('This will be blocked');&lt;/script&gt;
+        </div>
+    </div>
+
+    <script nonce="random123">
+        function testCSP() {
+            const input = document.getElementById('cspTest').value;
+            const resultsDiv = document.getElementById('cspResults');
+            const contentDiv = document.getElementById('cspContent');
+            
+            contentDiv.innerHTML = `
+                <p><strong>Input:</strong> ${input}</p>
+                <p>✅ CSP blocks inline scripts without nonces</p>
+                <p>✅ Only nonce-based scripts are allowed</p>
+                <p>✅ This script has a valid nonce and executes</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        console.log('✅ Strict CSP example loaded with nonce protection');
+    </script>
+</body>
+</html> 

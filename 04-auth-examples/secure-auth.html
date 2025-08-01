@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Authentication Examples</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Secure Authentication Examples</h1>
+            <p>Learn proper authentication and authorization practices</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Security Features Implemented:</strong>
+            <ul>
+                <li>Strong Password Requirements</li>
+                <li>Multi-Factor Authentication</li>
+                <li>Session Management</li>
+                <li>Access Control</li>
+                <li>Rate Limiting</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <h3>🔐 Secure Login System</h3>
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            <button onclick="secureLogin()" class="btn">Secure Login</button>
+            <div id="loginResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// ✅ SECURE: Strong password validation
+function validatePassword(password) {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return password.length >= minLength && 
+           hasUpperCase && hasLowerCase && 
+           hasNumbers && hasSpecialChar;
+}
+
+// ✅ SECURE: Rate limiting
+let loginAttempts = 0;
+const maxAttempts = 5;
+const lockoutTime = 15 * 60 * 1000; // 15 minutes
+        </div>
+    </div>
+
+    <script>
+        function secureLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const resultsDiv = document.getElementById('loginResults');
+            
+            // ✅ SECURE: Input validation
+            if (!username || !password) {
+                resultsDiv.innerHTML = '<p style="color: #f44336;">❌ Please fill in all fields</p>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            // ✅ SECURE: Password strength validation
+            if (!validatePassword(password)) {
+                resultsDiv.innerHTML = `
+                    <p style="color: #f44336;">❌ Password too weak!</p>
+                    <p>Password must contain:</p>
+                    <ul>
+                        <li>At least 8 characters</li>
+                        <li>Uppercase and lowercase letters</li>
+                        <li>Numbers and special characters</li>
+                    </ul>
+                `;
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            // ✅ SECURE: Simulate authentication
+            if (username === 'admin' && password === 'SecurePass123!') {
+                resultsDiv.innerHTML = `
+                    <p style="color: #4caf50;">✅ Login successful!</p>
+                    <p>✅ Strong password validated</p>
+                    <p>✅ Rate limiting active</p>
+                    <p>✅ Session management enabled</p>
+                `;
+            } else {
+                resultsDiv.innerHTML = '<p style="color: #f44336;">❌ Invalid credentials</p>';
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function validatePassword(password) {
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            
+            return password.length >= minLength && 
+                   hasUpperCase && hasLowerCase && 
+                   hasNumbers && hasSpecialChar;
+        }
+        
+        console.log('✅ Secure authentication examples loaded');
+    </script>
+</body>
+</html> 

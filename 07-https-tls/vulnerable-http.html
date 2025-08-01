@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerable HTTP Demo - Security Testing</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #f44336; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #856404; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚨 Vulnerable HTTP Demo</h1>
+            <p>Demonstrating HTTP security vulnerabilities</p>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ WARNING:</strong> This page demonstrates HTTP vulnerabilities for educational purposes only.
+            <br>These examples show why HTTPS is essential for security.
+        </div>
+
+        <div class="form-section">
+            <h3>📡 HTTP vs HTTPS Comparison</h3>
+            <p>See the difference between secure and insecure connections:</p>
+            <button onclick="testHTTPvsHTTPS()" class="btn">Test HTTP vs HTTPS</button>
+            <div id="protocolResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>👁️ Man-in-the-Middle Attack Demo</h3>
+            <p>Simulating data interception over HTTP:</p>
+            <div class="form-group">
+                <label>Credit Card Number:</label>
+                <input type="text" id="creditCard" placeholder="1234-5678-9012-3456" value="1234-5678-9012-3456">
+            </div>
+            <button onclick="simulateMITM()" class="btn">Simulate MITM Attack</button>
+            <div id="mitmResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔓 HTTP Security Vulnerabilities</h3>
+            <p>Common HTTP security issues:</p>
+            <button onclick="showHTTPVulnerabilities()" class="btn">Show Vulnerabilities</button>
+            <div id="vulnResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// 🚨 HTTP Vulnerabilities (Educational Only)
+
+// 1. Plain text transmission
+GET /login HTTP/1.1
+Host: example.com
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=secret123
+
+// 2. No encryption
+// All data transmitted in plain text
+// Easily intercepted by attackers
+
+// 3. No integrity protection
+// Data can be modified in transit
+// No way to detect tampering
+
+// 4. No authentication
+// Cannot verify server identity
+// Vulnerable to impersonation attacks
+        </div>
+    </div>
+
+    <script>
+        function testHTTPvsHTTPS() {
+            const resultsDiv = document.getElementById('protocolResults');
+            
+            const currentProtocol = window.location.protocol;
+            const isSecure = currentProtocol === 'https:';
+            
+            resultsDiv.innerHTML = `
+                <h4>📡 HTTP vs HTTPS Comparison:</h4>
+                <p><strong>Current Protocol:</strong> ${currentProtocol}</p>
+                <p><strong>Secure Connection:</strong> ${isSecure ? '✅ Yes' : '❌ No'}</p>
+                
+                <h5>HTTP (Insecure):</h5>
+                <ul>
+                    <li>❌ Data transmitted in plain text</li>
+                    <li>❌ No encryption</li>
+                    <li>❌ No integrity protection</li>
+                    <li>❌ No server authentication</li>
+                    <li>❌ Vulnerable to MITM attacks</li>
+                </ul>
+                
+                <h5>HTTPS (Secure):</h5>
+                <ul>
+                    <li>✅ Data encrypted with TLS</li>
+                    <li>✅ Strong encryption algorithms</li>
+                    <li>✅ Integrity protection</li>
+                    <li>✅ Server certificate validation</li>
+                    <li>✅ Protection against MITM attacks</li>
+                </ul>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function simulateMITM() {
+            const creditCard = document.getElementById('creditCard').value;
+            const resultsDiv = document.getElementById('mitmResults');
+            
+            resultsDiv.innerHTML = `
+                <h4>👁️ Man-in-the-Middle Attack Simulation:</h4>
+                <p><strong>Original Data:</strong> ${creditCard}</p>
+                <p><strong>Transmitted over HTTP:</strong></p>
+                <div style="background: #ffebee; padding: 10px; border-radius: 4px; font-family: monospace;">
+                    POST /payment HTTP/1.1<br>
+                    Host: example.com<br>
+                    Content-Type: application/x-www-form-urlencoded<br><br>
+                    card_number=${creditCard}&amount=100.00
+                </div>
+                
+                <h5>🚨 Attack Scenario:</h5>
+                <ul>
+                    <li>Attacker intercepts HTTP traffic</li>
+                    <li>Credit card number transmitted in plain text</li>
+                    <li>Attacker can read all sensitive data</li>
+                    <li>No encryption to protect information</li>
+                    <li>Data can be modified in transit</li>
+                </ul>
+                
+                <h5>✅ Solution:</h5>
+                <ul>
+                    <li>Use HTTPS for all sensitive data</li>
+                    <li>Implement TLS encryption</li>
+                    <li>Validate server certificates</li>
+                    <li>Use HSTS headers</li>
+                    <li>Redirect HTTP to HTTPS</li>
+                </ul>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function showHTTPVulnerabilities() {
+            const resultsDiv = document.getElementById('vulnResults');
+            
+            resultsDiv.innerHTML = `
+                <h4>🔓 HTTP Security Vulnerabilities:</h4>
+                
+                <h5>1. Eavesdropping:</h5>
+                <ul>
+                    <li>All data transmitted in plain text</li>
+                    <li>Passwords, credit cards, personal info exposed</li>
+                    <li>Network sniffers can capture all traffic</li>
+                </ul>
+                
+                <h5>2. Man-in-the-Middle Attacks:</h5>
+                <ul>
+                    <li>Attackers can intercept and modify traffic</li>
+                    <li>No way to verify server identity</li>
+                    <li>Can redirect users to fake sites</li>
+                </ul>
+                
+                <h5>3. Data Tampering:</h5>
+                <ul>
+                    <li>No integrity protection</li>
+                    <li>Data can be modified in transit</li>
+                    <li>No way to detect unauthorized changes</li>
+                </ul>
+                
+                <h5>4. Session Hijacking:</h5>
+                <ul>
+                    <li>Session cookies transmitted in plain text</li>
+                    <li>Attackers can steal user sessions</li>
+                    <li>No protection against session fixation</li>
+                </ul>
+                
+                <h5>5. Credential Stuffing:</h5>
+                <ul>
+                    <li>Login credentials easily captured</li>
+                    <li>Reused passwords can be exploited</li>
+                    <li>No protection against brute force attacks</li>
+                </ul>
+                
+                <h5>✅ Mitigation Strategies:</h5>
+                <ul>
+                    <li>Always use HTTPS for sensitive data</li>
+                    <li>Implement HSTS (HTTP Strict Transport Security)</li>
+                    <li>Redirect all HTTP traffic to HTTPS</li>
+                    <li>Use strong TLS configuration</li>
+                    <li>Validate server certificates properly</li>
+                </ul>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        console.log('🚨 HTTP vulnerability demo loaded');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TLS Testing - Security Tools</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #2196f3; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .btn { padding: 10px 20px; background: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 TLS Testing Tools</h1>
+            <p>Transport Layer Security testing and validation</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ TLS Testing Features:</strong>
+            <ul>
+                <li>Certificate Validation</li>
+                <li>Cipher Suite Testing</li>
+                <li>Protocol Version Detection</li>
+                <li>Security Headers Analysis</li>
+                <li>Vulnerability Scanning</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <h3>🔍 TLS Configuration Test</h3>
+            <button onclick="testTLSConfiguration()" class="btn">Test TLS Config</button>
+            <div id="tlsResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔐 Certificate Analysis</h3>
+            <button onclick="analyzeCertificate()" class="btn">Analyze Certificate</button>
+            <div id="certResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🛡️ Security Headers Check</h3>
+            <button onclick="checkSecurityHeaders()" class="btn">Check Headers</button>
+            <div id="headerResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// ✅ SECURE: TLS Configuration
+const tlsConfig = {
+    minVersion: 'TLSv1.2',
+    maxVersion: 'TLSv1.3',
+    ciphers: [
+        'TLS_AES_256_GCM_SHA384',
+        'TLS_CHACHA20_POLY1305_SHA256',
+        'TLS_AES_128_GCM_SHA256'
+    ]
+};
+
+// ✅ SECURE: Certificate validation
+function validateCertificate(cert) {
+    const now = new Date();
+    const validFrom = new Date(cert.validFrom);
+    const validTo = new Date(cert.validTo);
+    
+    return now >= validFrom && now <= validTo;
+}
+
+// ✅ SECURE: Security headers
+const securityHeaders = {
+    'Strict-Transport-Security': 'max-age=31536000',
+    'X-Frame-Options': 'DENY',
+    'X-Content-Type-Options': 'nosniff'
+};
+        </div>
+    </div>
+
+    <script>
+        function testTLSConfiguration() {
+            const resultsDiv = document.getElementById('tlsResults');
+            
+            const tlsInfo = {
+                protocol: window.location.protocol,
+                isSecure: window.location.protocol === 'https:',
+                userAgent: navigator.userAgent,
+                connection: navigator.connection || 'Not available',
+                tlsVersion: 'TLS 1.3 (simulated)',
+                cipherSuite: 'TLS_AES_256_GCM_SHA384 (simulated)'
+            };
+            
+            resultsDiv.innerHTML = `
+                <h4>🔒 TLS Configuration Results:</h4>
+                <p><strong>Protocol:</strong> ${tlsInfo.protocol}</p>
+                <p><strong>Secure Connection:</strong> ${tlsInfo.isSecure ? '✅ Yes' : '❌ No'}</p>
+                <p><strong>TLS Version:</strong> ${tlsInfo.tlsVersion}</p>
+                <p><strong>Cipher Suite:</strong> ${tlsInfo.cipherSuite}</p>
+                <p><strong>User Agent:</strong> ${tlsInfo.userAgent}</p>
+                
+                <h5>Security Recommendations:</h5>
+                <ul>
+                    <li>✅ Use TLS 1.3 when possible</li>
+                    <li>✅ Implement HSTS headers</li>
+                    <li>✅ Validate certificates properly</li>
+                    <li>✅ Use strong cipher suites</li>
+                    <li>✅ Prevent mixed content</li>
+                </ul>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function analyzeCertificate() {
+            const resultsDiv = document.getElementById('certResults');
+            
+            // Simulate certificate analysis
+            const certInfo = {
+                issuer: 'Let\'s Encrypt Authority X3',
+                subject: 'example.com',
+                validFrom: '2024-01-01',
+                validTo: '2024-04-01',
+                signatureAlgorithm: 'SHA256withRSA',
+                keySize: 2048,
+                isExpired: false,
+                isSelfSigned: false
+            };
+            
+            resultsDiv.innerHTML = `
+                <h4>🔐 Certificate Analysis Results:</h4>
+                <p><strong>Issuer:</strong> ${certInfo.issuer}</p>
+                <p><strong>Subject:</strong> ${certInfo.subject}</p>
+                <p><strong>Valid From:</strong> ${certInfo.validFrom}</p>
+                <p><strong>Valid To:</strong> ${certInfo.validTo}</p>
+                <p><strong>Signature Algorithm:</strong> ${certInfo.signatureAlgorithm}</p>
+                <p><strong>Key Size:</strong> ${certInfo.keySize} bits</p>
+                <p><strong>Expired:</strong> ${certInfo.isExpired ? '❌ Yes' : '✅ No'}</p>
+                <p><strong>Self-Signed:</strong> ${certInfo.isSelfSigned ? '❌ Yes' : '✅ No'}</p>
+                
+                <h5>Certificate Security:</h5>
+                <ul>
+                    <li>✅ Valid certificate chain</li>
+                    <li>✅ Strong signature algorithm</li>
+                    <li>✅ Adequate key size</li>
+                    <li>✅ Not expired</li>
+                    <li>✅ Trusted CA</li>
+                </ul>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function checkSecurityHeaders() {
+            const resultsDiv = document.getElementById('headerResults');
+            
+            // Simulate security headers check
+            const headers = {
+                'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+                'X-Frame-Options': 'DENY',
+                'X-Content-Type-Options': 'nosniff',
+                'Referrer-Policy': 'strict-origin-when-cross-origin',
+                'Content-Security-Policy': 'default-src \'self\'',
+                'X-XSS-Protection': '1; mode=block'
+            };
+            
+            let headerHtml = '';
+            for (const [header, value] of Object.entries(headers)) {
+                headerHtml += `<li><strong>${header}:</strong> ${value}</li>`;
+            }
+            
+            resultsDiv.innerHTML = `
+                <h4>🛡️ Security Headers Analysis:</h4>
+                <ul>
+                    ${headerHtml}
+                </ul>
+                
+                <h5>Security Assessment:</h5>
+                <ul>
+                    <li>✅ HSTS implemented</li>
+                    <li>✅ Clickjacking protection</li>
+                    <li>✅ MIME type sniffing protection</li>
+                    <li>✅ Referrer policy set</li>
+                    <li>✅ CSP implemented</li>
+                    <li>✅ XSS protection enabled</li>
+                </ul>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        console.log('🔒 TLS testing tools loaded');
+    </script>
+</body>
+</html> 

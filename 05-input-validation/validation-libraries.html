@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation Libraries - Security Tools</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Validation Libraries</h1>
+            <p>Popular input validation and sanitization libraries</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Popular Validation Libraries:</strong>
+            <ul>
+                <li>Joi - Schema validation for JavaScript</li>
+                <li>Yup - Object schema validation</li>
+                <li>Validator.js - String validation and sanitization</li>
+                <li>DOMPurify - HTML sanitization</li>
+                <li>XSS - XSS prevention library</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <h3>📚 Joi Schema Validation</h3>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="joiEmail" placeholder="test@example.com">
+            </div>
+            <div class="form-group">
+                <label>Age:</label>
+                <input type="number" id="joiAge" placeholder="25">
+            </div>
+            <button onclick="testJoiValidation()" class="btn">Test Joi Validation</button>
+            <div id="joiResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🧹 DOMPurify Sanitization</h3>
+            <div class="form-group">
+                <label>HTML Input:</label>
+                <input type="text" id="dompurifyInput" value="<script>alert('XSS')</script><b>Safe HTML</b>">
+            </div>
+            <button onclick="testDOMPurify()" class="btn">Test DOMPurify</button>
+            <div id="dompurifyResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// ✅ Joi Schema Validation
+const Joi = require('joi');
+
+const userSchema = Joi.object({
+    email: Joi.string().email().required(),
+    age: Joi.number().min(18).max(100).required(),
+    password: Joi.string().min(8).pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+});
+
+// ✅ DOMPurify Sanitization
+const clean = DOMPurify.sanitize(dirtyHTML, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong'],
+    ALLOWED_ATTR: []
+});
+
+// ✅ Validator.js
+const validator = require('validator');
+const isEmail = validator.isEmail(email);
+const isURL = validator.isURL(url);
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
+    <script>
+        function testJoiValidation() {
+            const email = document.getElementById('joiEmail').value;
+            const age = document.getElementById('joiAge').value;
+            const resultsDiv = document.getElementById('joiResults');
+            
+            // Simulate Joi validation
+            const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            const ageValid = age >= 18 && age <= 100;
+            
+            resultsDiv.innerHTML = `
+                <h4>📚 Joi Validation Results:</h4>
+                <p><strong>Email:</strong> ${emailValid ? '✅ Valid' : '❌ Invalid'}</p>
+                <p><strong>Age:</strong> ${ageValid ? '✅ Valid' : '❌ Invalid'}</p>
+                <p>✅ Schema validation completed</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function testDOMPurify() {
+            const input = document.getElementById('dompurifyInput').value;
+            const resultsDiv = document.getElementById('dompurifyResults');
+            
+            // Use DOMPurify to sanitize
+            const clean = DOMPurify.sanitize(input, {
+                ALLOWED_TAGS: ['b', 'i', 'em', 'strong'],
+                ALLOWED_ATTR: []
+            });
+            
+            resultsDiv.innerHTML = `
+                <h4>🧹 DOMPurify Sanitization Results:</h4>
+                <p><strong>Original:</strong> ${input}</p>
+                <p><strong>Sanitized:</strong> ${clean}</p>
+                <p>✅ Dangerous content removed</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        console.log('✅ Validation libraries loaded');
+    </script>
+</body>
+</html> 

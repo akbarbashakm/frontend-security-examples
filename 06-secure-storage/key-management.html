@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Key Management - Security Tools</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .key-display { background: #fff3e0; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔑 Key Management</h1>
+            <p>Secure key generation, storage, and rotation</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Key Management Features:</strong>
+            <ul>
+                <li>Cryptographic Key Generation</li>
+                <li>Secure Key Storage</li>
+                <li>Key Rotation Policies</li>
+                <li>Hardware Security Modules (HSM)</li>
+                <li>Key Escrow and Recovery</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <h3>🔐 Generate Cryptographic Keys</h3>
+            <button onclick="generateKeys()" class="btn">Generate AES Key</button>
+            <button onclick="generateRSAKeys()" class="btn">Generate RSA Keys</button>
+            <div id="keyResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔄 Key Rotation Demo</h3>
+            <button onclick="simulateKeyRotation()" class="btn">Simulate Key Rotation</button>
+            <div id="rotationResults" class="result-area" style="display: none;"></div>
+        </div>
+
+        <div class="code-example">
+// ✅ SECURE: Key Generation
+async function generateAESKey() {
+    return await crypto.subtle.generateKey(
+        { name: 'AES-GCM', length: 256 },
+        true,
+        ['encrypt', 'decrypt']
+    );
+}
+
+// ✅ SECURE: Key Storage
+const keyStorage = {
+    current: null,
+    previous: null,
+    rotationDate: null
+};
+
+// ✅ SECURE: Key Rotation
+function rotateKeys() {
+    keyStorage.previous = keyStorage.current;
+    keyStorage.current = generateNewKey();
+    keyStorage.rotationDate = new Date();
+}
+        </div>
+    </div>
+
+    <script>
+        let currentKey = null;
+        let previousKey = null;
+        
+        async function generateKeys() {
+            const resultsDiv = document.getElementById('keyResults');
+            
+            try {
+                // Generate AES key
+                currentKey = await crypto.subtle.generateKey(
+                    { name: 'AES-GCM', length: 256 },
+                    true,
+                    ['encrypt', 'decrypt']
+                );
+                
+                // Export key for display (in real app, never expose keys)
+                const exportedKey = await crypto.subtle.exportKey('raw', currentKey);
+                const keyArray = Array.from(new Uint8Array(exportedKey));
+                
+                resultsDiv.innerHTML = `
+                    <h4>🔐 AES Key Generated Successfully!</h4>
+                    <p><strong>Key Type:</strong> AES-256-GCM</p>
+                    <p><strong>Key Length:</strong> 256 bits</p>
+                    <p><strong>Key ID:</strong> ${Date.now()}</p>
+                    <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                    <div class="key-display">
+                        <strong>Key (first 16 bytes):</strong> ${keyArray.slice(0, 16).map(b => b.toString(16).padStart(2, '0')).join('')}...
+                    </div>
+                    <p>✅ Key generated and stored securely</p>
+                `;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <h4>❌ Key Generation Failed</h4>
+                    <p style="color: #f44336;">Error: ${error.message}</p>
+                `;
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        async function generateRSAKeys() {
+            const resultsDiv = document.getElementById('keyResults');
+            
+            try {
+                // Generate RSA key pair
+                const keyPair = await crypto.subtle.generateKey(
+                    {
+                        name: 'RSA-OAEP',
+                        modulusLength: 2048,
+                        publicExponent: new Uint8Array([1, 0, 1]),
+                        hash: 'SHA-256'
+                    },
+                    true,
+                    ['encrypt', 'decrypt']
+                );
+                
+                resultsDiv.innerHTML = `
+                    <h4>🔐 RSA Key Pair Generated Successfully!</h4>
+                    <p><strong>Algorithm:</strong> RSA-OAEP</p>
+                    <p><strong>Key Size:</strong> 2048 bits</p>
+                    <p><strong>Hash:</strong> SHA-256</p>
+                    <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                    <p>✅ Public and private keys generated</p>
+                `;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <h4>❌ RSA Key Generation Failed</h4>
+                    <p style="color: #f44336;">Error: ${error.message}</p>
+                `;
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        function simulateKeyRotation() {
+            const resultsDiv = document.getElementById('rotationResults');
+            
+            if (!currentKey) {
+                resultsDiv.innerHTML = '<p style="color: #f44336;">❌ No current key to rotate</p>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+            
+            // Simulate key rotation
+            previousKey = currentKey;
+            currentKey = null;
+            const rotationDate = new Date();
+            
+            resultsDiv.innerHTML = `
+                <h4>🔄 Key Rotation Completed!</h4>
+                <p><strong>Previous Key:</strong> Archived</p>
+                <p><strong>Current Key:</strong> Rotated out</p>
+                <p><strong>Rotation Date:</strong> ${rotationDate.toLocaleString()}</p>
+                <p><strong>Next Rotation:</strong> ${new Date(rotationDate.getTime() + 90 * 24 * 60 * 60 * 1000).toLocaleDateString()}</p>
+                <p>✅ Keys rotated according to policy</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+        
+        console.log('🔑 Key management examples loaded');
+    </script>
+</body>
+</html> 

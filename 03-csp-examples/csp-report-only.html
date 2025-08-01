@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSP Report-Only Mode</title>
+    
+    <!-- 🧪 CSP REPORT-ONLY: Test CSP without breaking functionality -->
+    <meta http-equiv="Content-Security-Policy-Report-Only" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; report-uri #csp-violation-report">
+    
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #ff9800, #f57c00); color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .report-only { background: #fff3e0; border: 1px solid #ff9800; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #ef6c00; }
+        .demo-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .violation-demo { background: #ffebee; border: 1px solid #f44336; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .btn { padding: 10px 20px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #f57c00; }
+        .btn-danger { background: #f44336; }
+        .btn-success { background: #4caf50; }
+        .input-field { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin: 10px 0; box-sizing: border-box; }
+        .violation-log { background: #f8f9fa; padding: 15px; border: 1px solid #dee2e6; border-radius: 4px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; margin: 15px 0; }
+        .violation-entry { padding: 8px; margin: 5px 0; border-radius: 4px; border-left: 4px solid #dc3545; background: white; }
+        .stats { display: flex; gap: 20px; margin: 20px 0; }
+        .stat-box { flex: 1; background: white; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #ddd; }
+        .stat-number { font-size: 24px; font-weight: bold; color: #ff9800; }
+        .deployment-guide { background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2196f3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 CSP Report-Only Mode</h1>
+            <p>Test Content Security Policy without breaking your site</p>
+        </div>
+
+        <div class="report-only">
+            <strong>🧪 Report-Only Mode Active:</strong> CSP violations are logged but not blocked!
+            <br>This allows you to test CSP policies before enforcing them in production.
+        </div>
+
+        <!-- Current Configuration -->
+        <div class="demo-section">
+            <h3>🔍 Report-Only CSP Configuration</h3>
+            <div class="code-example">
+Content-Security-Policy-Report-Only:
+    default-src 'self';              // Would block: external resources
+    script-src 'self';               // Would block: inline scripts, external scripts
+    style-src 'self';                // Would block: inline styles, external stylesheets
+    img-src 'self' data: https:;     // Would allow: same-origin, data URLs, HTTPS images
+    report-uri #csp-violation-report // Send violations to this endpoint
+            </div>
+
+            <h4>🎯 What Report-Only Mode Does:</h4>
+            <ul>
+                <li>✅ <strong>Allows everything to execute</strong> - No functionality breaks</li>
+                <li>📊 <strong>Reports violations</strong> - Logs what would be blocked</li>
+                <li>🔍 <strong>Identifies issues</strong> - Shows where CSP would cause problems</li>
+                <li>📈 <strong>Collects data</strong> - Gathers statistics for policy refinement</li>
+                <li>🚀 <strong>Safe testing</strong> - Perfect for production testing</li>
+            </ul>
+        </div>
+
+        <!-- Violation Statistics -->
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number" id="totalViolations">0</div>
+                <div>Total Violations</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="scriptViolations">0</div>
+                <div>Script Violations</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="styleViolations">0</div>
+                <div>Style Violations</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="uniqueViolations">0</div>
+                <div>Unique Sources</div>
+            </div>
+        </div>
+
+        <!-- Intentional Violations for Testing -->
+        <div class="violation-demo">
+            <h3>🎯 Generate Test Violations</h3>
+            <p>These actions will trigger CSP violations (but still execute in Report-Only mode):</p>
+
+            <h4>1. Inline Script Violation</h4>
+            <button class="btn btn-danger" onclick="generateInlineScript()">Execute Inline Script</button>
+            <div id="inlineScriptResult"></div>
+
+            <h4>2. External Script Violation</h4>
+            <input type="text" class="input-field" id="externalScriptUrl" value="https://code.jquery.com/jquery-3.6.0.min.js" placeholder="External script URL">
+            <button class="btn btn-danger" onclick="loadExternalScript()">Load External Script</button>
+            <div id="externalScriptResult"></div>
+
+            <h4>3. Inline Style Violation</h4>
+            <button class="btn btn-danger" onclick="addInlineStyle()">Add Inline Style</button>
+            <div id="inlineStyleResult"></div>
+
+            <h4>4. eval() Violation</h4>
+            <input type="text" class="input-field" id="evalCode" value="alert('eval() executed in report-only mode')" placeholder="JavaScript code to eval">
+            <button class="btn btn-danger" onclick="executeEval()">Execute eval()</button>
+            <div id="evalResult"></div>
+
+            <h4>5. Event Handler Violation</h4>
+            <button class="btn btn-danger" onclick="addEventHandler()">Add Inline Event Handler</button>
+            <div id="eventHandlerResult"></div>
+        </div>
+
+        <!-- Violation Monitoring -->
+        <div class="demo-section">
+            <h3>📊 Real-time Violation Monitoring</h3>
+            <p>CSP violations are automatically detected and logged below:</p>
+            
+            <div class="violation-log" id="violationLog">
+                <div style="color: #28a745; text-align: center; padding: 20px;">
+                    🧪 Report-Only CSP monitoring active<br>
+                    Violations will appear here as they occur
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 15px 0;">
+                <button class="btn" onclick="clearViolationLog()">Clear Log</button>
+                <button class="btn" onclick="exportViolations()">Export Violations</button>
+                <button class="btn btn-danger" onclick="generateAllViolations()">Generate All Test Violations</button>
+            </div>
+        </div>
+
+        <!-- Deployment Strategy -->
+        <div class="deployment-guide">
+            <h3>🚀 CSP Deployment Strategy</h3>
+            
+            <h4>Phase 1: Report-Only Testing (Current)</h4>
+            <div class="code-example">
+# Step 1: Deploy with Report-Only header
+Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self'; report-uri /csp-violations
+
+# Step 2: Monitor violations for 1-2 weeks
+# Step 3: Analyze patterns and adjust policy
+            </div>
+
+            <h4>Phase 2: Policy Refinement</h4>
+            <div class="code-example">
+# Common adjustments based on violations:
+
+# Allow specific external scripts
+script-src 'self' https://trusted-cdn.com https://analytics.google.com
+
+# Allow inline styles (if needed)  
+style-src 'self' 'unsafe-inline'
+
+# Allow data URLs for images
+img-src 'self' data: https:
+
+# Final policy example:
+Content-Security-Policy-Report-Only: 
+    default-src 'self'; 
+    script-src 'self' https://trusted-cdn.com; 
+    style-src 'self' 'unsafe-inline'; 
+    img-src 'self' data: https:; 
+    report-uri /csp-violations
+            </div>
+
+            <h4>Phase 3: Gradual Enforcement</h4>
+            <div class="code-example">
+# Step 1: Switch to enforcement mode for small percentage
+Content-Security-Policy: [refined-policy]; report-uri /csp-violations
+
+# Step 2: Monitor for new violations
+# Step 3: Gradually increase enforcement percentage
+# Step 4: Full deployment once stable
+            </div>
+
+            <h4>🎯 Analysis Checklist:</h4>
+            <ul>
+                <li>📊 <strong>Volume patterns</strong>: Which violations are most common?</li>
+                <li>🔍 <strong>Source analysis</strong>: Which external resources are needed?</li>
+                <li>⏰ <strong>Timing patterns</strong>: When do violations occur most?</li>
+                <li>👥 <strong>User impact</strong>: Which violations affect functionality?</li>
+                <li>🛡️ <strong>Security vs usability</strong>: Balance protection with user experience</li>
+            </ul>
+        </div>
+
+        <!-- Implementation Examples -->
+        <div class="demo-section">
+            <h3>💻 Server Implementation Examples</h3>
+            
+            <h4>Express.js</h4>
+            <div class="code-example">
+const express = require('express');
+const app = express();
+
+// CSP Report-Only middleware
+app.use((req, res, next) => {
+    const policy = [
+        "default-src 'self'",
+        "script-src 'self'", 
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data: https:",
+        "report-uri /csp-violations"
+    ].join('; ');
+    
+    res.setHeader('Content-Security-Policy-Report-Only', policy);
+    next();
+});
+
+// Violation reporting endpoint
+app.post('/csp-violations', express.json(), (req, res) => {
+    console.log('CSP Violation:', req.body);
+    // Store in database, send to monitoring service, etc.
+    res.status(204).send();
+});
+            </div>
+
+            <h4>Apache (.htaccess)</h4>
+            <div class="code-example">
+# Add to .htaccess file
+Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; report-uri /csp-violations"
+            </div>
+
+            <h4>Nginx</h4>
+            <div class="code-example">
+# Add to nginx.conf
+add_header Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; report-uri /csp-violations" always;
+            </div>
+        </div>
+    </div>
+
+    <!-- Intentional violations for demonstration -->
+    <script>
+        // 🧪 This inline script will trigger a violation report (but still execute)
+        console.log('🧪 Inline script executed in Report-Only mode!');
+        console.log('📊 This violation is logged but not blocked');
+
+        // Violation tracking
+        let violationStats = {
+            total: 0,
+            script: 0,
+            style: 0,
+            uniqueSources: new Set()
+        };
+
+        // Functions to generate test violations
+        function generateInlineScript() {
+            const result = document.getElementById('inlineScriptResult');
+            
+            // Create and execute inline script (violation but works)
+            const script = document.createElement('script');
+            script.textContent = 'console.log("🧪 Dynamically created inline script - Report-Only violation"); alert("Inline script executed successfully!");';
+            document.head.appendChild(script);
+            
+            result.innerHTML = '<div style="color: #4caf50; font-weight: bold;">✅ Inline script executed (violation reported)</div>';
+            console.log('🧪 Generated inline script violation');
+        }
+
+        function loadExternalScript() {
+            const url = document.getElementById('externalScriptUrl').value;
+            const result = document.getElementById('externalScriptResult');
+            
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = function() {
+                result.innerHTML = `<div style="color: #4caf50; font-weight: bold;">✅ External script loaded: ${url}<br><small>(violation reported but allowed)</small></div>`;
+                console.log('🧪 External script loaded in Report-Only mode:', url);
+            };
+            script.onerror = function() {
+                result.innerHTML = `<div style="color: #f44336; font-weight: bold;">❌ Failed to load: ${url}</div>`;
+            };
+            document.head.appendChild(script);
+        }
+
+        function addInlineStyle() {
+            const result = document.getElementById('inlineStyleResult');
+            
+            // Add inline style (violation but works)
+            const div = document.createElement('div');
+            div.style.cssText = 'background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 15px; color: white; border-radius: 8px; margin: 10px 0; text-align: center; font-weight: bold;';
+            div.textContent = '✅ Inline style applied (CSP violation reported)';
+            result.appendChild(div);
+            
+            console.log('🧪 Generated inline style violation');
+        }
+
+        function executeEval() {
+            const code = document.getElementById('evalCode').value;
+            const result = document.getElementById('evalResult');
+            
+            try {
+                // Execute eval (violation but works in Report-Only)
+                eval(code);
+                result.innerHTML = '<div style="color: #4caf50; font-weight: bold;">✅ eval() executed successfully (violation reported)</div>';
+                console.log('🧪 eval() executed in Report-Only mode:', code);
+            } catch (error) {
+                result.innerHTML = `<div style="color: #f44336; font-weight: bold;">❌ eval() error: ${error.message}</div>`;
+            }
+        }
+
+        function addEventHandler() {
+            const result = document.getElementById('eventHandlerResult');
+            
+            // Add element with inline event handler (violation but works)
+            const button = document.createElement('button');
+            button.textContent = 'Click me (inline handler)';
+            button.setAttribute('onclick', 'alert("Inline event handler executed! CSP violation reported.")');
+            button.style.cssText = 'padding: 10px; background: #ff9800; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 10px 0;';
+            
+            result.appendChild(button);
+            console.log('🧪 Generated inline event handler violation');
+        }
+
+        function generateAllViolations() {
+            console.log('🧪 Generating all test violations...');
+            setTimeout(generateInlineScript, 100);
+            setTimeout(() => loadExternalScript(), 500);
+            setTimeout(addInlineStyle, 1000);
+            setTimeout(executeEval, 1500);
+            setTimeout(addEventHandler, 2000);
+        }
+
+        // CSP violation event listener
+        document.addEventListener('securitypolicyviolation', function(event) {
+            console.log('🚨 CSP Violation Event (Report-Only):', event);
+            logViolation(event);
+            updateStats(event);
+        });
+
+        function logViolation(event) {
+            const log = document.getElementById('violationLog');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const entry = document.createElement('div');
+            entry.className = 'violation-entry';
+            entry.innerHTML = `
+                <div style="font-weight: bold; color: #dc3545;">[${timestamp}] CSP Violation Detected</div>
+                <div><strong>Directive:</strong> ${event.violatedDirective}</div>
+                <div><strong>Blocked URI:</strong> ${event.blockedURI || 'inline'}</div>
+                <div><strong>Source:</strong> ${event.sourceFile || 'unknown'}:${event.lineNumber || '?'}</div>
+                <div><strong>Original Policy:</strong> ${event.originalPolicy?.substring(0, 100)}...</div>
+                <div style="font-size: 10px; color: #666; margin-top: 5px;">
+                    <em>Note: In Report-Only mode, this violation was logged but not blocked</em>
+                </div>
+            `;
+            
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateStats(event) {
+            violationStats.total++;
+            violationStats.uniqueSources.add(event.blockedURI || 'inline');
+            
+            if (event.violatedDirective.includes('script')) {
+                violationStats.script++;
+            } else if (event.violatedDirective.includes('style')) {
+                violationStats.style++;
+            }
+            
+            // Update UI
+            document.getElementById('totalViolations').textContent = violationStats.total;
+            document.getElementById('scriptViolations').textContent = violationStats.script;
+            document.getElementById('styleViolations').textContent = violationStats.style;
+            document.getElementById('uniqueViolations').textContent = violationStats.uniqueSources.size;
+        }
+
+        function clearViolationLog() {
+            document.getElementById('violationLog').innerHTML = `
+                <div style="color: #28a745; text-align: center; padding: 20px;">
+                    🧪 Report-Only CSP monitoring active<br>
+                    Violations will appear here as they occur
+                </div>
+            `;
+            
+            // Reset stats
+            violationStats = {
+                total: 0,
+                script: 0,
+                style: 0,
+                uniqueSources: new Set()
+            };
+            updateStats({violatedDirective: ''});
+        }
+
+        function exportViolations() {
+            const violations = Array.from(document.querySelectorAll('.violation-entry')).map(entry => entry.textContent);
+            
+            const data = {
+                timestamp: new Date().toISOString(),
+                stats: {
+                    total: violationStats.total,
+                    script: violationStats.script,
+                    style: violationStats.style,
+                    uniqueSources: Array.from(violationStats.uniqueSources)
+                },
+                violations: violations
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `csp-violations-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            console.log('📊 Violations exported:', data);
+        }
+
+        // Initialize
+        console.log('🧪 Report-Only CSP page initialized');
+        console.log('📊 Violation monitoring active');
+    </script>
+
+    <!-- External stylesheet that would trigger violation -->
+    <style>
+        /* This inline style will trigger a violation report */
+        .violation-indicator {
+            background: linear-gradient(45deg, #ff9800, #f57c00);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</body>
+</html> 

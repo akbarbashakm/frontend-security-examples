@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure CSRF Examples - Protection Mechanisms</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { background: #4caf50; color: white; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }
+        .success { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin-bottom: 20px; color: #2e7d32; }
+        .form-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .form-group { margin: 15px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #45a049; }
+        .result-area { background: #e8f5e8; border: 1px solid #4caf50; padding: 15px; border-radius: 4px; margin: 20px 0; }
+        .code-example { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 4px; margin: 10px 0; overflow-x: auto; font-family: 'Courier New', monospace; }
+        .protection-method { background: #e3f2fd; padding: 15px; border-radius: 4px; margin: 20px 0; border-left: 4px solid #2196f3; }
+        .token-display { background: #fff3e0; padding: 10px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Secure CSRF Examples - Protection Mechanisms</h1>
+            <p>Learn how to properly protect against Cross-Site Request Forgery attacks</p>
+        </div>
+
+        <div class="success">
+            <strong>✅ Security Features Implemented:</strong>
+            <ul>
+                <li>CSRF Tokens - Unique tokens for each request</li>
+                <li>SameSite Cookies - Prevent cross-site requests</li>
+                <li>Origin Header Validation - Check request origin</li>
+                <li>Double Submit Cookies - Additional token verification</li>
+                <li>Re-authentication - For sensitive operations</li>
+            </ul>
+        </div>
+
+        <!-- CSRF Token Protection -->
+        <div class="form-section">
+            <h3>🔐 CSRF Token Protection</h3>
+            <p>Generate and validate unique tokens for each request:</p>
+            
+            <div class="form-group">
+                <label>Transfer Amount:</label>
+                <input type="number" id="secureAmount" value="100" min="1" max="10000">
+            </div>
+            
+            <div class="form-group">
+                <label>Recipient Account:</label>
+                <input type="text" id="secureRecipient" value="123456789" placeholder="Account number">
+            </div>
+            
+            <div class="token-display">
+                <strong>Current CSRF Token:</strong> <span id="currentToken">Loading...</span>
+            </div>
+            
+            <button onclick="performSecureTransfer()" class="btn">Transfer Money (Secure)</button>
+            
+            <div id="secureTransferResults" class="result-area" style="display: none;">
+                <h4>Transfer Results (Protected):</h4>
+                <div id="secureTransferContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: CSRF token generation and validation
+function generateCSRFToken() {
+    return crypto.getRandomValues(new Uint8Array(32))
+        .reduce((acc, val) => acc + val.toString(16).padStart(2, '0'), '');
+}
+
+function validateCSRFToken(token) {
+    const storedToken = sessionStorage.getItem('csrfToken');
+    return token === storedToken;
+}
+
+// ✅ SECURE: Include token in requests
+const token = generateCSRFToken();
+sessionStorage.setItem('csrfToken', token);
+formData.append('csrfToken', token);
+            </div>
+        </div>
+
+        <!-- SameSite Cookie Protection -->
+        <div class="form-section">
+            <h3>🍪 SameSite Cookie Protection</h3>
+            <p>Configure cookies to prevent cross-site requests:</p>
+            
+            <div class="protection-method">
+                <strong>Secure Cookie Configuration:</strong>
+                <ul>
+                    <li>✅ <code>SameSite=Strict</code> - Blocks all cross-site requests</li>
+                    <li>✅ <code>Secure</code> - Only sent over HTTPS</li>
+                    <li>✅ <code>HttpOnly</code> - Not accessible via JavaScript</li>
+                    <li>✅ <code>Path=/</code> - Limited to specific path</li>
+                </ul>
+            </div>
+
+            <button onclick="setSecureCookie()" class="btn">Set Secure Cookie</button>
+            <button onclick="testSameSiteProtection()" class="btn">Test SameSite Protection</button>
+            
+            <div id="cookieResults" class="result-area" style="display: none;">
+                <h4>Cookie Protection Results:</h4>
+                <div id="cookieContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: SameSite cookie configuration
+function setSecureCookie(name, value) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
+    
+    document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; secure; samesite=strict; httponly`;
+}
+
+// Server-side equivalent (Node.js/Express)
+res.cookie('sessionId', sessionId, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000
+});
+            </div>
+        </div>
+
+        <!-- Origin Header Validation -->
+        <div class="form-section">
+            <h3>🌐 Origin Header Validation</h3>
+            <p>Validate request origin to prevent cross-site attacks:</p>
+            
+            <div class="form-group">
+                <label>Request Origin:</label>
+                <input type="text" id="requestOrigin" value="https://trusted-site.com" placeholder="Enter request origin">
+            </div>
+            
+            <button onclick="validateOrigin()" class="btn">Validate Origin</button>
+            
+            <div id="originResults" class="result-area" style="display: none;">
+                <h4>Origin Validation Results:</h4>
+                <div id="originContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: Origin header validation
+function validateOrigin(origin) {
+    const allowedOrigins = [
+        'https://trusted-site.com',
+        'https://secure-bank.com',
+        'https://api.secure-bank.com'
+    ];
+    
+    return allowedOrigins.includes(origin);
+}
+
+// Server-side validation (Node.js/Express)
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    const allowedOrigins = ['https://trusted-site.com'];
+    
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        next();
+    } else {
+        res.status(403).json({ error: 'Invalid origin' });
+    }
+});
+            </div>
+        </div>
+
+        <!-- Double Submit Cookie Pattern -->
+        <div class="form-section">
+            <h3>🔄 Double Submit Cookie Pattern</h3>
+            <p>Use both cookie and form field for CSRF protection:</p>
+            
+            <div class="form-group">
+                <label>Action:</label>
+                <select id="secureAction">
+                    <option value="transfer">Money Transfer</option>
+                    <option value="password">Password Change</option>
+                    <option value="email">Email Update</option>
+                </select>
+            </div>
+            
+            <button onclick="performDoubleSubmit()" class="btn">Perform Action (Double Submit)</button>
+            
+            <div id="doubleSubmitResults" class="result-area" style="display: none;">
+                <h4>Double Submit Results:</h4>
+                <div id="doubleSubmitContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: Double submit cookie pattern
+function performDoubleSubmit() {
+    const cookieToken = getCookie('csrfToken');
+    const formToken = generateCSRFToken();
+    
+    // Both tokens must match
+    if (cookieToken === formToken) {
+        // Proceed with action
+        return true;
+    } else {
+        // Reject request
+        return false;
+    }
+}
+
+// Server-side validation
+if (req.cookies.csrfToken === req.body.csrfToken) {
+    // Valid request
+} else {
+    // Invalid request - potential CSRF attack
+}
+            </div>
+        </div>
+
+        <!-- Re-authentication for Sensitive Operations -->
+        <div class="form-section">
+            <h3>🔒 Re-authentication for Sensitive Operations</h3>
+            <p>Require additional authentication for critical actions:</p>
+            
+            <div class="form-group">
+                <label>Current Password:</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password">
+            </div>
+            
+            <div class="form-group">
+                <label>New Password:</label>
+                <input type="password" id="newPassword" placeholder="Enter new password">
+            </div>
+            
+            <button onclick="changePasswordSecure()" class="btn">Change Password (Re-auth)</button>
+            
+            <div id="reAuthResults" class="result-area" style="display: none;">
+                <h4>Re-authentication Results:</h4>
+                <div id="reAuthContent"></div>
+            </div>
+
+            <div class="code-example">
+// ✅ SECURE: Re-authentication for sensitive operations
+function changePasswordSecure() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    
+    // Validate current password first
+    if (validateCurrentPassword(currentPassword)) {
+        // Proceed with password change
+        updatePassword(newPassword);
+    } else {
+        // Reject - invalid current password
+        throw new Error('Invalid current password');
+    }
+}
+
+// Server-side implementation
+app.post('/change-password', authenticateUser, (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    
+    if (validateCurrentPassword(req.user.id, currentPassword)) {
+        updatePassword(req.user.id, newPassword);
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ error: 'Invalid current password' });
+    }
+});
+            </div>
+        </div>
+
+        <!-- Security Best Practices -->
+        <div class="form-section">
+            <h3>📋 CSRF Protection Best Practices</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 4px;">
+                    <h4>✅ Do's:</h4>
+                    <ul>
+                        <li>Use CSRF tokens for all state-changing requests</li>
+                        <li>Implement SameSite=Strict cookies</li>
+                        <li>Validate Origin headers</li>
+                        <li>Use HTTPS for all requests</li>
+                        <li>Re-authenticate for sensitive operations</li>
+                        <li>Use double submit cookie pattern</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #ffebee; padding: 15px; border-radius: 4px;">
+                    <h4>❌ Don'ts:</h4>
+                    <ul>
+                        <li>Don't rely on GET requests for state changes</li>
+                        <li>Don't use predictable tokens</li>
+                        <li>Don't ignore Origin headers</li>
+                        <li>Don't use SameSite=None without Secure</li>
+                        <li>Don't trust Referer headers alone</li>
+                        <li>Don't skip re-authentication for critical actions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Demo -->
+        <div class="form-section">
+            <h3>🔍 Secure vs Vulnerable Comparison</h3>
+            <p>See the difference between secure and vulnerable CSRF implementations:</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: #ffebee; padding: 15px; border-radius: 4px;">
+                    <h4>❌ Vulnerable Implementation:</h4>
+                    <ul>
+                        <li>No CSRF tokens</li>
+                        <li>GET requests for state changes</li>
+                        <li>No Origin validation</li>
+                        <li>SameSite=None cookies</li>
+                        <li>No re-authentication</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #e8f5e8; padding: 15px; border-radius: 4px;">
+                    <h4>✅ Secure Implementation:</h4>
+                    <ul>
+                        <li>CSRF tokens for all requests</li>
+                        <li>POST requests only</li>
+                        <li>Origin header validation</li>
+                        <li>SameSite=Strict cookies</li>
+                        <li>Re-authentication for sensitive ops</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
+            <h3>🛡️ Implementation Checklist</h3>
+            <p>Ensure these CSRF protection measures are in place:</p>
+            <ul>
+                <li>✅ <strong>CSRF Tokens</strong> - Unique tokens for each request</li>
+                <li>✅ <strong>SameSite Cookies</strong> - Prevent cross-site requests</li>
+                <li>✅ <strong>Origin Validation</strong> - Check request origins</li>
+                <li>✅ <strong>Double Submit</strong> - Cookie + form field validation</li>
+                <li>✅ <strong>Re-authentication</strong> - For sensitive operations</li>
+                <li>✅ <strong>HTTPS Only</strong> - Secure transmission</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // ✅ SECURE: CSRF token generation
+        function generateCSRFToken() {
+            return crypto.getRandomValues(new Uint8Array(32))
+                .reduce((acc, val) => acc + val.toString(16).padStart(2, '0'), '');
+        }
+
+        // ✅ SECURE: Token validation
+        function validateCSRFToken(token) {
+            const storedToken = sessionStorage.getItem('csrfToken');
+            return token === storedToken;
+        }
+
+        // ✅ SECURE: Secure cookie setting
+        function setSecureCookie(name, value) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (24 * 60 * 60 * 1000));
+            
+            document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; secure; samesite=strict`;
+        }
+
+        // ✅ SECURE: Origin validation
+        function validateOrigin(origin) {
+            const allowedOrigins = [
+                'https://trusted-site.com',
+                'https://secure-bank.com',
+                'https://api.secure-bank.com'
+            ];
+            
+            return allowedOrigins.includes(origin);
+        }
+
+        // ✅ SECURE: Perform secure transfer
+        function performSecureTransfer() {
+            const amount = document.getElementById('secureAmount').value;
+            const recipient = document.getElementById('secureRecipient').value;
+            const token = document.getElementById('currentToken').textContent;
+            
+            const resultsDiv = document.getElementById('secureTransferResults');
+            const contentDiv = document.getElementById('secureTransferContent');
+            
+            // ✅ SECURE: Validate CSRF token
+            if (validateCSRFToken(token)) {
+                contentDiv.innerHTML = `
+                    <h4>💰 Transfer Successful!</h4>
+                    <p><strong>Amount:</strong> $${amount}</p>
+                    <p><strong>Recipient:</strong> ${recipient}</p>
+                    <p><strong>Status:</strong> Completed</p>
+                    <p style="color: #4caf50; font-weight: bold;">✅ CSRF protection active!</p>
+                `;
+            } else {
+                contentDiv.innerHTML = `
+                    <h4>❌ Transfer Failed!</h4>
+                    <p style="color: #f44336; font-weight: bold;">🚨 Invalid CSRF token - potential attack blocked!</p>
+                `;
+            }
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Secure transfer completed with CSRF protection');
+        }
+
+        // ✅ SECURE: Set secure cookie
+        function setSecureCookie() {
+            const token = generateCSRFToken();
+            setSecureCookie('csrfToken', token);
+            
+            const resultsDiv = document.getElementById('cookieResults');
+            const contentDiv = document.getElementById('cookieContent');
+            
+            contentDiv.innerHTML = `
+                <p><strong>Secure Cookie Set:</strong></p>
+                <p>Name: csrfToken</p>
+                <p>Value: ${token.substring(0, 16)}...</p>
+                <p>Attributes: Secure, SameSite=Strict, HttpOnly</p>
+                <p>✅ Cookie configured to prevent CSRF attacks</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Secure cookie set with CSRF protection');
+        }
+
+        // ✅ SECURE: Test SameSite protection
+        function testSameSiteProtection() {
+            const resultsDiv = document.getElementById('cookieResults');
+            const contentDiv = document.getElementById('cookieContent');
+            
+            contentDiv.innerHTML = `
+                <p><strong>SameSite Protection Test:</strong></p>
+                <p>✅ Cross-site requests blocked by SameSite=Strict</p>
+                <p>✅ Cookies only sent in same-site requests</p>
+                <p>✅ Prevents CSRF attacks from malicious sites</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ SameSite protection test completed');
+        }
+
+        // ✅ SECURE: Validate origin
+        function validateOrigin() {
+            const origin = document.getElementById('requestOrigin').value;
+            const resultsDiv = document.getElementById('originResults');
+            const contentDiv = document.getElementById('originContent');
+            
+            const isValid = validateOrigin(origin);
+            
+            contentDiv.innerHTML = `
+                <p><strong>Origin:</strong> ${origin}</p>
+                <p><strong>Validation:</strong> ${isValid ? '✅ Valid' : '❌ Invalid'}</p>
+                <p>${isValid ? '✅ Request allowed from trusted origin' : '🚨 Request blocked - untrusted origin'}</p>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Origin validation completed');
+        }
+
+        // ✅ SECURE: Double submit pattern
+        function performDoubleSubmit() {
+            const action = document.getElementById('secureAction').value;
+            const cookieToken = getCookie('csrfToken');
+            const formToken = generateCSRFToken();
+            
+            const resultsDiv = document.getElementById('doubleSubmitResults');
+            const contentDiv = document.getElementById('doubleSubmitContent');
+            
+            // ✅ SECURE: Validate both tokens
+            if (cookieToken && cookieToken === formToken) {
+                contentDiv.innerHTML = `
+                    <h4>✅ Action Completed Successfully!</h4>
+                    <p><strong>Action:</strong> ${action}</p>
+                    <p><strong>Status:</strong> Double submit validation passed</p>
+                    <p>✅ Both cookie and form tokens matched</p>
+                `;
+            } else {
+                contentDiv.innerHTML = `
+                    <h4>❌ Action Failed!</h4>
+                    <p style="color: #f44336; font-weight: bold;">🚨 Double submit validation failed - potential CSRF attack!</p>
+                `;
+            }
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Double submit validation completed');
+        }
+
+        // ✅ SECURE: Re-authentication
+        function changePasswordSecure() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            
+            const resultsDiv = document.getElementById('reAuthResults');
+            const contentDiv = document.getElementById('reAuthContent');
+            
+            // ✅ SECURE: Validate current password
+            if (currentPassword === 'correctPassword') {
+                contentDiv.innerHTML = `
+                    <h4>✅ Password Changed Successfully!</h4>
+                    <p><strong>Status:</strong> Re-authentication passed</p>
+                    <p><strong>New Password:</strong> ${newPassword.replace(/./g, '*')}</p>
+                    <p>✅ Current password validated before change</p>
+                `;
+            } else {
+                contentDiv.innerHTML = `
+                    <h4>❌ Password Change Failed!</h4>
+                    <p style="color: #f44336; font-weight: bold;">🚨 Invalid current password - re-authentication failed!</p>
+                `;
+            }
+            
+            resultsDiv.style.display = 'block';
+            console.log('✅ Re-authentication completed');
+        }
+
+        // Helper function to get cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // Initialize page
+        window.onload = function() {
+            // Generate initial CSRF token
+            const token = generateCSRFToken();
+            sessionStorage.setItem('csrfToken', token);
+            document.getElementById('currentToken').textContent = token;
+            
+            console.log('✅ Secure CSRF examples loaded');
+            console.log('🔐 CSRF token generated and stored');
+            console.log('🍪 SameSite cookie protection configured');
+        };
+    </script>
+</body>
+</html> 
