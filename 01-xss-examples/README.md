@@ -2,31 +2,31 @@
 
 ## What is XSS?
 
-XSS is when malicious scripts are injected into trusted websites. Oru website la attacker malicious JavaScript code inject pannuvom, adhoda result ah other users browser la execute aagum.
+XSS is when malicious scripts are injected into trusted websites. An attacker injects malicious JavaScript code into a website, and the result gets executed in other users' browsers.
 
 ## Types of XSS
 
 ### 1. Reflected XSS (Non-Persistent)
 - User input immediately returned by server
-- URL parameters la malicious script inject pannuvom
+- Malicious script injected via URL parameters
 - **Example**: Search results page
 
 ### 2. Stored XSS (Persistent) 
 - Malicious script stored in database
-- Every user visits panrappo execute aagum
+- Executes every time users visit the page
 - **Example**: Comment sections, user profiles
 
 ### 3. DOM-based XSS
-- Client-side JavaScript modify panradhu unsafe
-- Server involvement illa
+- Client-side JavaScript modifies content unsafely
+- No server involvement required
 - **Example**: URL fragment processing
 
 ## Impact of XSS
 
-- **Session hijacking**: User cookies steal pannalam
-- **Data theft**: Sensitive information access
-- **Defacement**: Website content change pannalam
-- **Malware distribution**: Users ku malware spread pannalam
+- **Session hijacking**: Steal user cookies and sessions
+- **Data theft**: Access sensitive information
+- **Defacement**: Modify website content
+- **Malware distribution**: Spread malware to users
 
 ## Practical Examples
 
